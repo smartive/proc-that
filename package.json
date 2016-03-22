@@ -4,7 +4,7 @@
   "description": "easy extendable etl tool written in typesript",
   "main": "build/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "tsc && mocha --ui bdd --recursive ./build",
     "develop": "tsc -w"
   },
   "keywords": [
@@ -15,6 +15,9 @@
   "author": "Christoph Bühler <christoph@smartive.ch>",
   "license": "GPL-3.0",
   "devDependencies": {
+    "chai": "^3.5.0",
+    "chai-as-promised": "^5.3.0",
+    "mocha": "^2.4.5",
     "typescript": "^1.8.9",
     "typings": "^0.7.9"
   },
