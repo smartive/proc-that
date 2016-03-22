@@ -53,7 +53,13 @@ export class Etl {
         // run all extractors, load in buffer (parallel)
         // from buffer into all transformers (keep order)
         // and then through all loaders (parallel)
-        return null;
+
+        return Promise
+            .all(this.extractors.map(extractor => extractor.read()))
+            .then(results => {
+                console.log(results);
+                return Promise.resolve(true);
+            });
     }
 
     public reset():void {
