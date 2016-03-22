@@ -4,8 +4,7 @@
 		"module": "commonjs",
 		"moduleResolution": "node",
 		"removeComments": true,
-		"outDir": "./build",
-        "pretty": true
+		"outDir": "./build"
 	},
 	"exclude": [
 		"node_modules",
