@@ -4,8 +4,9 @@
   "description": "easy extendable etl tool written in typesript",
   "main": "build/index.js",
   "scripts": {
-    "test": "tsc && mocha --ui bdd --recursive ./build",
-    "develop": "tsc -w"
+    "clean": "rm -rf ./build",
+    "test": "npm run clean && tsc && mocha --ui bdd --recursive ./build",
+    "develop": "npm run clean && tsc -w"
   },
   "keywords": [
     "etl",
