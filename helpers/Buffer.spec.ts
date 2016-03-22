@@ -1,9 +1,13 @@
 import chai = require('chai');
 import asPromised = require('chai-as-promised');
+import sinon = require('sinon');
+import sinonChai = require('sinon-chai');
+import {Promise} from 'es6-promise';
 import {Buffer} from './Buffer';
 
-chai.use(asPromised);
 let should = chai.should();
+chai.use(asPromised);
+chai.use(sinonChai);
 
 describe('Buffer<any>', () => {
 
@@ -37,29 +41,75 @@ describe('Buffer<any>', () => {
 
     describe('read()', () => {
 
-        it('should return a Promise');
+        it('should return a Promise', () => {
+            buf.write('');
+            buf.read().should.be.a('Promise');
+        });
 
-        it('should not resolve without write while empty');
+        it('should not resolve without write while empty', done => {
+            buf.read().then(obj => {
+                done(new Error('promise returned'));
+            });
 
-        it('should not throw an error on empty read');
+            setTimeout(() => {
+                done();
+            }, 500);
+        });
 
-        it('should resolve on write');
+        it('should resolve on write', () => {
+            return Promise.all([
+                buf.read().should.eventually.become('hello'),
+                buf.write('hello').should.be.fulfilled
+            ]);
+        });
 
-        it('should emit release event');
+        it('should emit release event', () => {
+            let spy = sinon.spy();
+            buf.on('release', spy);
+            buf.read();
+            buf.write('');
+            spy.should.have.callCount(1);
+        });
 
     });
 
     describe('write()', () => {
 
-        it('should return a Promise');
+        beforeEach(done => {
+            buf.size = 1;
+            buf.write('hello').then(() => done());
+        });
 
-        it('should not resolve without read while full');
+        it('should return a Promise', () => {
+            buf.read();
+            buf.write('').should.be.a('Promise');
+        });
 
-        it('should not throw an error on full write');
+        it('should not resolve without read while full', done => {
+            buf.write('world').then(obj => {
+                done(new Error('promise returned'));
+            });
 
-        it('should resolve on read');
+            setTimeout(() => {
+                done();
+            }, 500);
+        });
 
-        it('should emit write event');
+        it('should resolve on read', () => {
+            return Promise.all([
+                buf.write('world').should.be.fulfilled,
+                buf.read().should.eventually.become('hello'),
+                buf.read().should.eventually.become('world')
+            ]);
+        });
+
+        it('should emit write event', () => {
+            let spy = sinon.spy();
+            buf.on('write', spy);
+            buf.read();
+            buf.write('');
+            spy.should.have.callCount(1);
+        });
 
     });
 

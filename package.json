@@ -18,6 +18,8 @@
     "chai": "^3.5.0",
     "chai-as-promised": "^5.3.0",
     "mocha": "^2.4.5",
+    "sinon": "^1.17.3",
+    "sinon-chai": "^2.8.0",
     "typescript": "^1.8.9",
     "typings": "^0.7.9"
   },

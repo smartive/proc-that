@@ -1,18 +1,6 @@
 import {EventEmitter} from 'events';
 import {Promise} from 'es6-promise';
 
-export class BufferSealedError extends Error {
-    constructor() {
-        super('Buffer is sealed.');
-    }
-}
-
-export class BufferFullError extends Error {
-    constructor() {
-        super('Buffer is full.');
-    }
-}
-
 export class Buffer<T> extends EventEmitter {
     private content:T[] = [];
     private _size:number;
@@ -31,7 +19,7 @@ export class Buffer<T> extends EventEmitter {
     }
 
     public get isFull():boolean {
-        return this.content.length > this._size;
+        return this.content.length >= this._size;
     }
 
     public get isEmpty():boolean {
