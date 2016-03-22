@@ -4,7 +4,9 @@
 		"module": "commonjs",
 		"moduleResolution": "node",
 		"removeComments": true,
-		"outDir": "./build"
+		"outDir": "./build",
+		"diagnostics": true,
+		"listFiles": true
 	},
 	"exclude": [
 		"node_modules",
