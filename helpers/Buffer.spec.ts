@@ -58,7 +58,7 @@ describe('Buffer<any>', () => {
 
         it('should resolve on write', () => {
             return Promise.all([
-                buf.read().should.eventually.become('hello'),
+                buf.read().should.eventually.equal('hello'),
                 buf.write('hello').should.be.fulfilled
             ]);
         });
@@ -98,8 +98,8 @@ describe('Buffer<any>', () => {
         it('should resolve on read', () => {
             return Promise.all([
                 buf.write('world').should.be.fulfilled,
-                buf.read().should.eventually.become('hello'),
-                buf.read().should.eventually.become('world')
+                buf.read().should.eventually.equal('hello'),
+                buf.read().should.eventually.equal('world')
             ]);
         });
 
