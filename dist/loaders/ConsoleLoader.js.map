@@ -1,0 +1,10 @@
+{
+  "version": 3,
+  "file": "ConsoleLoader.js",
+  "sourceRoot": "",
+  "sources": [
+    "../../loaders/ConsoleLoader.ts"
+  ],
+  "names": [],
+  "mappings": ";AACA,4BAAsB,aAAa,CAAC,CAAA;AAEpC;IAAA;IAKA,CAAC;IAJU,6BAAK,GAAZ,UAAa,MAAU;QACnB,OAAO,CAAC,GAAG,CAAC,MAAM,CAAC,CAAC;QACpB,MAAM,CAAC,qBAAO,CAAC,OAAO,EAAE,CAAC;IAC7B,CAAC;IACL,oBAAC;AAAD,CAAC,AALD,IAKC;AALY,qBAAa,gBAKzB,CAAA"
+}

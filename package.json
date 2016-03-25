@@ -4,9 +4,10 @@
   "description": "easy extendable etl tool written in typesript",
   "main": "build/index.js",
   "scripts": {
-    "clean": "rm -rf ./build",
+    "clean": "rimraf build",
     "test": "npm run clean && tsc && mocha --ui bdd --recursive ./build",
-    "develop": "npm run clean && tsc -w"
+    "develop": "npm run clean && tsc -w",
+    "build": "rimraf build dist && tsc --outDir dist && trash dist/**/*.spec.js && trash dist/**/*.spec.js.map"
   },
   "keywords": [
     "etl",
@@ -19,8 +20,10 @@
     "chai": "^3.5.0",
     "chai-as-promised": "^5.3.0",
     "mocha": "^2.4.5",
+    "rimraf": "^2.5.2",
     "sinon": "^1.17.3",
     "sinon-chai": "^2.8.0",
+    "trash-cli": "^1.2.1",
     "typescript": "^1.8.9",
     "typings": "^0.7.9"
   },

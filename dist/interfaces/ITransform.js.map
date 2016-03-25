@@ -1,0 +1,10 @@
+{
+  "version": 3,
+  "file": "ITransform.js",
+  "sourceRoot": "",
+  "sources": [
+    "../../interfaces/ITransform.ts"
+  ],
+  "names": [],
+  "mappings": ""
+}

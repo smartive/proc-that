@@ -1,0 +1,10 @@
+{
+  "version": 3,
+  "file": "IExtract.js",
+  "sourceRoot": "",
+  "sources": [
+    "../../interfaces/IExtract.ts"
+  ],
+  "names": [],
+  "mappings": ""
+}
