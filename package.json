@@ -2,7 +2,7 @@
   "name": "node-ts-etl",
   "version": "0.1.0",
   "description": "easy extendable etl tool written in typesript",
-  "main": "build/index.js",
+  "main": "dist/index.js",
   "scripts": {
     "clean": "rimraf build",
     "test": "npm run clean && tsc && mocha --ui bdd --recursive ./build",
