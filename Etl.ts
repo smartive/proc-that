@@ -54,14 +54,19 @@ export class Etl {
         // run all extractors, load in buffer (parallel)
         // from buffer into all transformers (keep order)
         // and then through all loaders (parallel)
-
+        //this._state = EtlState.Running;
 
         this.inputBuffer.on('write', () => {
             this.inputBuffer.read()
                 .then(
-                    object => this.transformers
-                        .reduce((promise, transformer) => promise.then(result => transformer.process(result)), Promise.resolve(object))
-                        .then(result => this.outputBuffer.write(result))
+                    object => {
+                        if (!this.transformers.length) {
+                            return this.outputBuffer.write(object);
+                        }
+                        this.transformers
+                            .reduce((promise, transformer) => promise.then(result => transformer.process(result)), Promise.resolve(object))
+                            .then(result => this.outputBuffer.write(result))
+                    }
                 );
         });
 
@@ -71,19 +76,20 @@ export class Etl {
             () => this.outputBuffer.read().then(object => Promise.all(this.loaders.map(loader => loader.write(object))))
         );
 
-        Promise.all(this.extractors.map(extractor => extractor.read().then(result => {
-            if (result instanceof Array) {
-                return Promise.all(result.map(object => this.inputBuffer.write(object)));
-            }
-            return this.inputBuffer.write(result);
-        }))).then(() => this.inputBuffer.seal());
-
-        return new Promise((resolve, reject) => {
-            this.errorBuffer.once('error', err => {
-                reject(err);
-            });
-            this.outputBuffer.once('end', () => resolve());
-        });
+        return Promise
+            .all(this.extractors.map(extractor => extractor.read().then(result => {
+                if (result instanceof Array) {
+                    return Promise.all(result.map(object => this.inputBuffer.write(object)));
+                }
+                return this.inputBuffer.write(result);
+            })))
+            .then(() => this.inputBuffer.seal())
+            .then(() => new Promise((resolve, reject) => {
+                this.errorBuffer.once('error', err => {
+                    reject(err);
+                });
+                this.outputBuffer.once('end', () => resolve());
+            }));
     }
 
     public reset():void {
