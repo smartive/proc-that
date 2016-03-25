@@ -1,9 +1,16 @@
 import {EventEmitter} from 'events';
 import {Promise} from 'es6-promise';
 
+export class BufferSealedError extends Error {
+    constructor() {
+        super('Buffer is sealed.');
+    }
+}
+
 export class Buffer<T> extends EventEmitter {
     private content:T[] = [];
     private _size:number;
+    private _sealed:boolean = false;
 
     constructor(initialSize:number = 10) {
         super();
@@ -26,23 +33,43 @@ export class Buffer<T> extends EventEmitter {
         return this.content.length === 0;
     }
 
+    public get sealed():boolean {
+        return this._sealed;
+    }
+
+    public seal():void {
+        this._sealed = true;
+    }
+
     public read():Promise<T> {
         if (!this.isEmpty) {
             let content = this.content.shift();
             this.emit('release', content);
+
+            if (this.isEmpty) {
+                this.emit('empty');
+                if (this.sealed) this.emit('end');
+            }
+
             return Promise.resolve(content);
         }
+
         return new Promise(resolve => {
             this.once('write', () => resolve(this.read()));
         });
     }
 
     public write(object:T):Promise<T> {
+        if (this.sealed) {
+            return Promise.reject(new BufferSealedError());
+        }
+        
         if (!this.isFull) {
             this.content.push(object);
             this.emit('write', object);
             return Promise.resolve(object);
         }
+
         return new Promise(resolve => {
             this.once('release', () => resolve(this.write(object)));
         });

@@ -7,7 +7,6 @@ import {Buffer} from './helpers/Buffer';
 export enum EtlState {
     Running,
     Stopped,
-    Paused,
     Error
 }
 
@@ -16,7 +15,9 @@ export class Etl {
     private _transformers:ITransform[] = [];
     private _loaders:ILoad[] = [];
     private _state:EtlState = EtlState.Stopped;
-    private _buffer:Buffer<any> = new Buffer<any>();
+    private inputBuffer:Buffer<any> = new Buffer<any>();
+    private outputBuffer:Buffer<any> = new Buffer<any>();
+    private errorBuffer:Buffer<any> = new Buffer<any>();
 
     public get extractors():IExtract[] {
         return this._extractors;
@@ -54,12 +55,35 @@ export class Etl {
         // from buffer into all transformers (keep order)
         // and then through all loaders (parallel)
 
-        return Promise
-            .all(this.extractors.map(extractor => extractor.read()))
-            .then(results => {
-                console.log(results);
-                return Promise.resolve(true);
+
+        this.inputBuffer.on('write', () => {
+            this.inputBuffer.read()
+                .then(
+                    object => this.transformers
+                        .reduce((promise, transformer) => promise.then(result => transformer.process(result)), Promise.resolve(object))
+                        .then(result => this.outputBuffer.write(result))
+                );
+        });
+
+        this.inputBuffer.on('end', () => this.outputBuffer.seal());
+
+        this.outputBuffer.on('write',
+            () => this.outputBuffer.read().then(object => Promise.all(this.loaders.map(loader => loader.write(object))))
+        );
+
+        Promise.all(this.extractors.map(extractor => extractor.read().then(result => {
+            if (result instanceof Array) {
+                return Promise.all(result.map(object => this.inputBuffer.write(object)));
+            }
+            return this.inputBuffer.write(result);
+        }))).then(() => this.inputBuffer.seal());
+
+        return new Promise((resolve, reject) => {
+            this.errorBuffer.once('error', err => {
+                reject(err);
             });
+            this.outputBuffer.once('end', () => resolve());
+        });
     }
 
     public reset():void {
