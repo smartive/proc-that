@@ -10,11 +10,12 @@ describe('JsonExtractor', () => {
     it('should get correct path', () => {
         let ext = new JsonExtractor('hello');
         let anyExt:any = ext;
-        anyExt.path.should.equal('hello');
+        let result = process.cwd() + '/hello';
+        anyExt.filePath.should.equal(result);
     });
 
     it('should receive a json object', () => {
-        let ext = new JsonExtractor('../../.testdata/json-extractor.object.json');
+        let ext = new JsonExtractor('./.testdata/json-extractor.object.json');
         return ext.read().should.eventually.deep.equal({
             "foo": "bar",
             "hello": "world"
