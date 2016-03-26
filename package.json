@@ -14,6 +14,10 @@
     "node",
     "typescript"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:buehler/proc-that.git"
+  },
   "author": "Christoph Bühler <christoph.buehler@bluewin.ch>",
   "license": "GPL-3.0",
   "devDependencies": {
