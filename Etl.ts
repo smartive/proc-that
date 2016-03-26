@@ -10,6 +10,12 @@ export enum EtlState {
     Error
 }
 
+/**
+ * ETL Class. Instanciate one and add as many extractors, transformers and loaders as you want.
+ * Then start the whole process with ".start()".
+ *
+ * This processor is modular, you can find other implemented loaders and extractors at: https://github.com
+ */
 export class Etl {
     private _extractors:IExtract[] = [];
     private _transformers:ITransform[] = [];
@@ -50,6 +56,13 @@ export class Etl {
         return this;
     }
 
+    /**
+     * Starts the etl process. First, all extractors are ran in parallel and deliver their results into the buffer.
+     * Once the buffer gets a result, it transfers all objects through the transformers (one by one).
+     * After that, the transformed results are ran through all loaders in parallel.
+     *
+     * @returns {Promise<boolean>} Promise that resolves when the process is finished. Rejects, when any step receives an error.
+     */
     public start():Promise<boolean> {
         this._state = EtlState.Running;
 
@@ -95,6 +108,9 @@ export class Etl {
             }));
     }
 
+    /**
+     * Resets the whole Etl object. Deletes all modifiers and resets the state.
+     */
     public reset():void {
         this._extractors = [];
         this._transformers = [];
