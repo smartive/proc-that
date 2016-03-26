@@ -17,7 +17,6 @@ var Etl = (function () {
         this.outputBuffer = new Buffer_1.Buffer();
         this.errorBuffer = new Buffer_1.Buffer();
     }
-
     Object.defineProperty(Etl.prototype, "extractors", {
         get: function () {
             return this._extractors;
@@ -75,7 +74,7 @@ var Etl = (function () {
                         .then(function (result) {
                             return _this.outputBuffer.write(result);
                         });
-                });
+            });
         });
         this.inputBuffer.on('end', function () {
             return _this.outputBuffer.seal();
@@ -105,7 +104,7 @@ var Etl = (function () {
                 return new es6_promise_1.Promise(function (resolve, reject) {
                     _this.errorBuffer.once('error', function (err) {
                         reject(err);
-                    });
+            });
                     _this.outputBuffer.once('end', function () {
                         return resolve();
                     });

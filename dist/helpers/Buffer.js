@@ -14,7 +14,6 @@ var BufferSealedError = (function (_super) {
     function BufferSealedError() {
         _super.call(this, 'Buffer is sealed.');
     }
-
     return BufferSealedError;
 }(Error));
 exports.BufferSealedError = BufferSealedError;
@@ -29,7 +28,6 @@ var Buffer = (function (_super) {
         this._sealed = false;
         this._size = initialSize;
     }
-
     Object.defineProperty(Buffer.prototype, "size", {
         get: function () {
             return this._size;

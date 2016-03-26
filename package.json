@@ -7,7 +7,7 @@
     "clean": "rimraf build",
     "test": "npm run clean && tsc && mocha --ui bdd --recursive ./build",
     "develop": "npm run clean && tsc -w",
-    "build": "rimraf build dist && tsc --outDir dist && trash dist/**/*.spec.js && trash dist/**/*.spec.js.map"
+    "build": "rimraf build dist && tsc --outDir dist -d && trash dist/**/*.spec.js && trash dist/**/*.spec.js.map"
   },
   "keywords": [
     "etl",

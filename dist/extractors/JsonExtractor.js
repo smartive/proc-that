@@ -5,7 +5,6 @@ var JsonExtractor = (function () {
     function JsonExtractor(filePath) {
         this.filePath = path.resolve(process.cwd(), filePath);
     }
-
     JsonExtractor.prototype.read = function () {
         try {
             var file = require(this.filePath);
