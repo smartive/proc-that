@@ -1,7 +1,7 @@
 {
-  "name": "node-ts-etl",
+  "name": "proc-that",
   "version": "0.1.0",
-  "description": "easy extendable etl tool written in typesript",
+  "description": "proc(ess)-that - easy extendable etl tool written in typesript",
   "main": "dist/index.js",
   "scripts": {
     "clean": "rimraf build",
@@ -14,7 +14,7 @@
     "node",
     "typescript"
   ],
-  "author": "Christoph Bühler <christoph@smartive.ch>",
+  "author": "Christoph Bühler <christoph.buehler@bluewin.ch>",
   "license": "GPL-3.0",
   "devDependencies": {
     "chai": "^3.5.0",
