@@ -51,10 +51,7 @@ export class Etl {
     }
 
     public start():Promise<boolean> {
-        // run all extractors, load in buffer (parallel)
-        // from buffer into all transformers (keep order)
-        // and then through all loaders (parallel)
-        //this._state = EtlState.Running;
+        this._state = EtlState.Running;
 
         this.inputBuffer.on('write', () => {
             this.inputBuffer.read()
@@ -67,13 +64,14 @@ export class Etl {
                             .reduce((promise, transformer) => promise.then(result => transformer.process(result)), Promise.resolve(object))
                             .then(result => this.outputBuffer.write(result))
                     }
-                );
+                )
+                .catch(err => this.errorBuffer.write(err));
         });
 
         this.inputBuffer.on('end', () => this.outputBuffer.seal());
 
         this.outputBuffer.on('write',
-            () => this.outputBuffer.read().then(object => Promise.all(this.loaders.map(loader => loader.write(object))))
+            () => this.outputBuffer.read().then(object => Promise.all(this.loaders.map(loader => loader.write(object)))).catch(err => this.errorBuffer.write(err))
         );
 
         return Promise
@@ -84,11 +82,16 @@ export class Etl {
                 return this.inputBuffer.write(result);
             })))
             .then(() => this.inputBuffer.seal())
+            .catch(err => this.errorBuffer.write(err))
             .then(() => new Promise((resolve, reject) => {
                 this.errorBuffer.once('error', err => {
+                    this._state = EtlState.Error;
                     reject(err);
                 });
-                this.outputBuffer.once('end', () => resolve());
+                this.outputBuffer.once('end', () => {
+                    this._state = EtlState.Stopped;
+                    resolve();
+                });
             }));
     }
 
