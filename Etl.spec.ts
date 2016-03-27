@@ -74,9 +74,10 @@ describe('Etl', () => {
             .then(() => {
                 try {
                     loader.write.should.be.calledThrice;
-                    loader.write.firstCall.should.be.calledWith({objId: 1, name: 'foobar'});
-                    loader.write.secondCall.should.be.calledWith({objId: 2, name: 'hello world'});
-                    loader.write.thirdCall.should.be.calledWith({objId: 3, name: 'third test'});
+                    let spy:any = loader.write;
+                    spy.firstCall.should.be.calledWith({objId: 1, name: 'foobar'});
+                    spy.secondCall.should.be.calledWith({objId: 2, name: 'hello world'});
+                    spy.thirdCall.should.be.calledWith({objId: 3, name: 'third test'});
                     done();
                 } catch (e) {
                     done(e);
