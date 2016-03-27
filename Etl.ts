@@ -71,41 +71,46 @@ export class Etl {
                 .then(
                     object => {
                         if (!this.transformers.length) {
-                            return this.outputBuffer.write(object);
+                            return object;
                         }
-                        this.transformers
-                            .reduce((promise, transformer) => promise.then(result => transformer.process(result)), Promise.resolve(object))
-                            .then(result => this.outputBuffer.write(result))
+                        return this.transformers
+                            .reduce((promise, transformer) => promise.then(result => transformer.process(result)), Promise.resolve(object));
                     }
                 )
+                .then(result => this.outputBuffer.write(result))
                 .catch(err => this.errorBuffer.write(err));
         });
 
-        this.inputBuffer.on('end', () => this.outputBuffer.seal());
+        this.inputBuffer.once('end', () => this.outputBuffer.seal());
 
         this.outputBuffer.on('write',
             () => this.outputBuffer.read().then(object => Promise.all(this.loaders.map(loader => loader.write(object)))).catch(err => this.errorBuffer.write(err))
         );
 
-        return Promise
-            .all(this.extractors.map(extractor => extractor.read().then(result => {
-                if (result instanceof Array) {
-                    return Promise.all(result.map(object => this.inputBuffer.write(object)));
-                }
-                return this.inputBuffer.write(result);
-            })))
-            .then(() => this.inputBuffer.seal())
+        Promise
+            .all(this.extractors
+                .map(extractor => extractor.read()
+                    .then(result => {
+                        if (result instanceof Array) {
+                            return Promise.all(result.map(object => this.inputBuffer.write(object)));
+                        }
+                        return this.inputBuffer.write(result);
+                    })))
             .catch(err => this.errorBuffer.write(err))
-            .then(() => new Promise((resolve, reject) => {
-                this.errorBuffer.once('error', err => {
-                    this._state = EtlState.Error;
-                    reject(err);
-                });
-                this.outputBuffer.once('end', () => {
-                    this._state = EtlState.Stopped;
-                    resolve();
-                });
-            }));
+            .then(() => this.inputBuffer.seal());
+
+        return new Promise((resolve, reject) => {
+            this.errorBuffer.once('write', err => {
+                this._state = EtlState.Error;
+                this.outputBuffer.removeAllListeners();
+                this.inputBuffer.removeAllListeners();
+                reject(err);
+            });
+            this.outputBuffer.once('end', () => {
+                this._state = EtlState.Stopped;
+                resolve();
+            });
+        });
     }
 
     /**

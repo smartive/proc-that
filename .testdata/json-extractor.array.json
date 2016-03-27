@@ -1,0 +1,14 @@
+[
+  {
+    "objId": 1,
+    "name": "foobar"
+  },
+  {
+    "objId": 2,
+    "name": "hello world"
+  },
+  {
+    "objId": 3,
+    "name": "third test"
+  }
+]

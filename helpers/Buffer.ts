@@ -39,6 +39,9 @@ export class Buffer<T> extends EventEmitter {
 
     public seal():void {
         this._sealed = true;
+        if (this.isEmpty) {
+            this.emit('end');
+        }
     }
 
     public read():Promise<T> {
@@ -63,7 +66,7 @@ export class Buffer<T> extends EventEmitter {
         if (this.sealed) {
             return Promise.reject(new BufferSealedError());
         }
-        
+
         if (!this.isFull) {
             this.content.push(object);
             this.emit('write', object);
