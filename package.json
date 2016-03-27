@@ -19,6 +19,7 @@
     "type": "git",
     "url": "git@github.com:buehler/proc-that.git"
   },
+  "bugs": "https://github.com/buehler/proc-that/issues",
   "readme": "README.md",
   "author": "Christoph Bühler <christoph.buehler@bluewin.ch>",
   "license": "GPL-3.0",
