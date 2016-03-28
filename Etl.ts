@@ -14,7 +14,7 @@ export enum EtlState {
  * ETL Class. Instanciate one and add as many extractors, transformers and loaders as you want.
  * Then start the whole process with ".start()".
  *
- * This processor is modular, you can find other implemented loaders and extractors at: https://github.com
+ * This processor is modular, you can find other implemented loaders and extractors in the README
  */
 export class Etl {
     private _extractors:IExtract[] = [];
