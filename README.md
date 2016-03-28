@@ -28,12 +28,12 @@ Below is a list if extractors and loaders that are already implemented. Feel fre
 
 ## Extractors
 
- Name   || Description || Link 
---------||--------------||-----
- `proc-that-rest-extractor` || Extract objects from GET requests || http://google.ch
+ Name                           || Description                                      || Link 
+--------------------------------||--------------------------------------------------||-------------------------------------------------------
+ `proc-that-rest-extractor`     || Extract objects from GET requests                || https://github.com/buehler/proc-that-rest-extractor
 
 ## Loaders
 
- Name   || Description || Link 
---------||-------------||------
- `proc-that-elastic-loader` || Load transformed objects into elasticsearch || http://google.ch
+ Name                           || Description                                      || Link 
+--------------------------------||--------------------------------------------------||-------------------------------------------------------
+ `proc-that-elastic-loader`     || Load transformed objects into elasticsearch      || https://github.com/buehler/proc-that-elastic-loader
