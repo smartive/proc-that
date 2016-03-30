@@ -37,3 +37,7 @@ Below is a list if extractors and loaders that are already implemented. Feel fre
  Name                           || Description                                      || Link 
 --------------------------------||--------------------------------------------------||-------------------------------------------------------
  `proc-that-elastic-loader`     || Load transformed objects into elasticsearch      || https://github.com/buehler/proc-that-elastic-loader
+
+## Implement your own
+
+To ease up implementing your own extractors / transformers or loaders, just create a new repository and install `proc-that` as a dev-dependency. This package contains the needed definition files for the interfaces you need to create the extensions.
