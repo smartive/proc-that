@@ -2,7 +2,8 @@ import {IExtract} from './interfaces/IExtract';
 import {ITransform} from './interfaces/ITransform';
 import {ILoad} from './interfaces/ILoad';
 import {Observable} from 'rxjs';
-import {Promise} from 'es6-promise';
+
+let Promise = require('es6-promise').Promise;
 
 export enum EtlState {
     Running,

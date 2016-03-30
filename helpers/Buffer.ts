@@ -1,5 +1,6 @@
 import {EventEmitter} from 'events';
-import {Promise} from 'es6-promise';
+
+let Promise = require('es6-promise').Promise;
 
 export class BufferSealedError extends Error {
     constructor() {
