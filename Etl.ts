@@ -2,7 +2,7 @@ import {IExtract} from './interfaces/IExtract';
 import {ITransform} from './interfaces/ITransform';
 import {ILoad} from './interfaces/ILoad';
 import {Observable} from 'rxjs';
-import {Buffer} from './helpers/Buffer';
+import {Promise} from 'es6-promise';
 
 export enum EtlState {
     Running,
@@ -11,7 +11,7 @@ export enum EtlState {
 }
 
 /**
- * ETL Class. Instanciate one and add as many extractors, transformers and loaders as you want.
+ * ETL Class. Instantiate one and add as many extractors, transformers and loaders as you want.
  * Then start the whole process with ".start()".
  *
  * This processor is modular, you can find other implemented loaders and extractors in the README
@@ -21,9 +21,6 @@ export class Etl {
     private _transformers:ITransform[] = [];
     private _loaders:ILoad[] = [];
     private _state:EtlState = EtlState.Stopped;
-    private inputBuffer:Buffer<any> = new Buffer<any>();
-    private outputBuffer:Buffer<any> = new Buffer<any>();
-    private errorBuffer:Buffer<any> = new Buffer<any>();
 
     public get extractors():IExtract[] {
         return this._extractors;
@@ -57,21 +54,24 @@ export class Etl {
     }
 
     /**
-     * Starts the etl process. First, all extractors are ran in parallel and deliver their results into the buffer.
+     * Starts the etl process. First, all extractors are ran in parallel and deliver their results into an observable.
      * Once the buffer gets a result, it transfers all objects through the transformers (one by one).
      * After that, the transformed results are ran through all loaders in parallel.
      *
-     * @returns {Promise<boolean>} Promise that resolves when the process is finished. Rejects, when any step receives an error.
+     * @returns {Observable<any>} Observable that completes when the process is finished,
+     *                            during the "next" process step you get update on how many are processed yet.
+     *                            Throws when any step produces an error.
      */
     public start():Observable<any> {
         this._state = EtlState.Running;
 
         return Observable
             .merge(...this._extractors.map(extractor => extractor.read()))
-            .flatMap(res => {
-                return this._transformers.reduce((observable, transformer) => {
-                    return observable.flatMap(o => transformer.process(o));
-                }, Observable.of(res));
+            .flatMap(object => Observable.fromPromise(
+                this._transformers.reduce((promise, transformer) => promise.then(o => transformer.process(o)), Promise.resolve(object))
+            ))
+            .flatMap(object => {
+                return Observable.merge(...this._loaders.map(loader => Observable.fromPromise(loader.write(object))))
             })
             .do(null, err => {
                 this._state = EtlState.Error;
