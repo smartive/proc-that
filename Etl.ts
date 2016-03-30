@@ -1,7 +1,7 @@
 import {IExtract} from './interfaces/IExtract';
 import {ITransform} from './interfaces/ITransform';
 import {ILoad} from './interfaces/ILoad';
-import {Promise} from 'es6-promise';
+import {Observable} from 'rxjs';
 import {Buffer} from './helpers/Buffer';
 
 export enum EtlState {
@@ -63,54 +63,17 @@ export class Etl {
      *
      * @returns {Promise<boolean>} Promise that resolves when the process is finished. Rejects, when any step receives an error.
      */
-    public start():Promise<boolean> {
+    public start():Observable<any> {
         this._state = EtlState.Running;
 
-        this.inputBuffer.on('write', () => {
-            this.inputBuffer.read()
-                .then(
-                    object => {
-                        if (!this.transformers.length) {
-                            return object;
-                        }
-                        return this.transformers
-                            .reduce((promise, transformer) => promise.then(result => transformer.process(result)), Promise.resolve(object));
-                    }
-                )
-                .then(result => this.outputBuffer.write(result))
-                .catch(err => this.errorBuffer.write(err));
-        });
-
-        this.inputBuffer.once('end', () => this.outputBuffer.seal());
-
-        this.outputBuffer.on('write',
-            () => this.outputBuffer.read().then(object => Promise.all(this.loaders.map(loader => loader.write(object)))).catch(err => this.errorBuffer.write(err))
-        );
-
-        Promise
-            .all(this.extractors
-                .map(extractor => extractor.read()
-                    .then(result => {
-                        if (result instanceof Array) {
-                            return Promise.all(result.map(object => this.inputBuffer.write(object)));
-                        }
-                        return this.inputBuffer.write(result);
-                    })))
-            .catch(err => this.errorBuffer.write(err))
-            .then(() => this.inputBuffer.seal());
-
-        return new Promise((resolve, reject) => {
-            this.errorBuffer.once('write', err => {
+        return Observable
+            .merge(...this._extractors.map(extractor => extractor.read()))
+            .do(null, err => {
                 this._state = EtlState.Error;
-                this.outputBuffer.removeAllListeners();
-                this.inputBuffer.removeAllListeners();
-                reject(err);
-            });
-            this.outputBuffer.once('end', () => {
+                return Observable.throw(err);
+            }, () => {
                 this._state = EtlState.Stopped;
-                resolve();
             });
-        });
     }
 
     /**

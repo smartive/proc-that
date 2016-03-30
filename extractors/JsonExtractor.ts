@@ -1,5 +1,5 @@
 import {IExtract} from '../interfaces/IExtract';
-import {Promise} from 'es6-promise';
+import {Observable} from 'rxjs';
 import path = require('path');
 
 /**
@@ -12,12 +12,15 @@ export class JsonExtractor implements IExtract {
         this.filePath = path.resolve(process.cwd(), filePath);
     }
 
-    public read():Promise<any> {
+    public read():Observable<any> {
         try {
-            let file = require(this.filePath);
-            return Promise.resolve(file);
+            let content = require(this.filePath);
+            if (!(content instanceof Array) && content.constructor !== Array) {
+                return Observable.from([content]);
+            }
+            return Observable.from(content);
         } catch (e) {
-            return Promise.reject(e);
+            return Observable.throw(e);
         }
     }
 }
