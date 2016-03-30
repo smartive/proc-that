@@ -17,23 +17,25 @@ new Etl()
     .addTransformer(/* class that implements ITransform */)
     .addLoader(/* class that implements ILoad */)
     .start()
-    .then(success, error);
+    .subscribe(progress, error, success);
 ```
 
-When `.start()` is called, all extractors are started and their `.read()` function is called. If the if the result of the function is an array, all elements of the array are written one by one into the buffer. When the buffer receives objects, they are read and then put through the whole chain of transformers. The transformers are called in the order of their adding. All of the `.process(obj)` functions are called as promises. After the object is processed, it is written to the `outputBuffer`. From there, it is passed to all loaders with the `.write(obj)` function.
-
-After all objects are extracted, transformed and loaded, the `.start()` promise resolves and the process is finished.
+After all objects are extracted, transformed and loaded, the `.start()` observable completes and the process is finished.
 
 Below is a list if extractors and loaders that are already implemented. Feel free to implement your own extractor / transformer / loader and contribute it to this list with a PR.
 
 ## Extractors
 
- Name                           || Description                                      || Link 
---------------------------------||--------------------------------------------------||-------------------------------------------------------
- `proc-that-rest-extractor`     || Extract objects from GET requests                || https://github.com/buehler/proc-that-rest-extractor
+ Name                           | Description                                      | Link 
+--------------------------------|--------------------------------------------------|-------------------------------------------------------
+ `proc-that-rest-extractor`     | Extract objects from GET requests                | https://github.com/buehler/proc-that-rest-extractor
 
 ## Loaders
 
- Name                           || Description                                      || Link 
---------------------------------||--------------------------------------------------||-------------------------------------------------------
- `proc-that-elastic-loader`     || Load transformed objects into elasticsearch      || https://github.com/buehler/proc-that-elastic-loader
+ Name                           | Description                                      | Link 
+--------------------------------|--------------------------------------------------|-------------------------------------------------------
+ `proc-that-elastic-loader`     | Load transformed objects into elasticsearch      | https://github.com/buehler/proc-that-elastic-loader
+
+## Implement your own
+
+To ease up implementing your own extractors / transformers or loaders, just create a new repository and install `proc-that` as a dev-dependency. This package contains the needed definition files for the interfaces you need to create the extensions.

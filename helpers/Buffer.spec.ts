@@ -2,8 +2,9 @@ import chai = require('chai');
 import asPromised = require('chai-as-promised');
 import sinon = require('sinon');
 import sinonChai = require('sinon-chai');
-import {Promise} from 'es6-promise';
 import {Buffer} from './Buffer';
+
+let Promise = require('es6-promise').Promise;
 
 let should = chai.should();
 chai.use(asPromised);

@@ -1,8 +1,9 @@
 import {ILoad} from '../interfaces/ILoad';
-import {Promise} from 'es6-promise';
+
+let Promise = require('es6-promise').Promise;
 
 export class ConsoleLoader implements ILoad {
-    public write(object:any):Promise<boolean> {
+    public write(object:any):Promise<void> {
         console.log(object);
         return Promise.resolve();
     }

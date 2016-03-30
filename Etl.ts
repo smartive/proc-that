@@ -1,8 +1,9 @@
 import {IExtract} from './interfaces/IExtract';
 import {ITransform} from './interfaces/ITransform';
 import {ILoad} from './interfaces/ILoad';
-import {Promise} from 'es6-promise';
-import {Buffer} from './helpers/Buffer';
+import {Observable} from 'rxjs';
+
+let Promise = require('es6-promise').Promise;
 
 export enum EtlState {
     Running,
@@ -11,7 +12,7 @@ export enum EtlState {
 }
 
 /**
- * ETL Class. Instanciate one and add as many extractors, transformers and loaders as you want.
+ * ETL Class. Instantiate one and add as many extractors, transformers and loaders as you want.
  * Then start the whole process with ".start()".
  *
  * This processor is modular, you can find other implemented loaders and extractors in the README
@@ -21,9 +22,6 @@ export class Etl {
     private _transformers:ITransform[] = [];
     private _loaders:ILoad[] = [];
     private _state:EtlState = EtlState.Stopped;
-    private inputBuffer:Buffer<any> = new Buffer<any>();
-    private outputBuffer:Buffer<any> = new Buffer<any>();
-    private errorBuffer:Buffer<any> = new Buffer<any>();
 
     public get extractors():IExtract[] {
         return this._extractors;
@@ -57,60 +55,31 @@ export class Etl {
     }
 
     /**
-     * Starts the etl process. First, all extractors are ran in parallel and deliver their results into the buffer.
+     * Starts the etl process. First, all extractors are ran in parallel and deliver their results into an observable.
      * Once the buffer gets a result, it transfers all objects through the transformers (one by one).
      * After that, the transformed results are ran through all loaders in parallel.
      *
-     * @returns {Promise<boolean>} Promise that resolves when the process is finished. Rejects, when any step receives an error.
+     * @returns {Observable<any>} Observable that completes when the process is finished,
+     *                            during the "next" process step you get update on how many are processed yet.
+     *                            Throws when any step produces an error.
      */
-    public start():Promise<boolean> {
+    public start():Observable<any> {
         this._state = EtlState.Running;
 
-        this.inputBuffer.on('write', () => {
-            this.inputBuffer.read()
-                .then(
-                    object => {
-                        if (!this.transformers.length) {
-                            return object;
-                        }
-                        return this.transformers
-                            .reduce((promise, transformer) => promise.then(result => transformer.process(result)), Promise.resolve(object));
-                    }
-                )
-                .then(result => this.outputBuffer.write(result))
-                .catch(err => this.errorBuffer.write(err));
-        });
-
-        this.inputBuffer.once('end', () => this.outputBuffer.seal());
-
-        this.outputBuffer.on('write',
-            () => this.outputBuffer.read().then(object => Promise.all(this.loaders.map(loader => loader.write(object)))).catch(err => this.errorBuffer.write(err))
-        );
-
-        Promise
-            .all(this.extractors
-                .map(extractor => extractor.read()
-                    .then(result => {
-                        if (result instanceof Array) {
-                            return Promise.all(result.map(object => this.inputBuffer.write(object)));
-                        }
-                        return this.inputBuffer.write(result);
-                    })))
-            .catch(err => this.errorBuffer.write(err))
-            .then(() => this.inputBuffer.seal());
-
-        return new Promise((resolve, reject) => {
-            this.errorBuffer.once('write', err => {
+        return Observable
+            .merge(...this._extractors.map(extractor => extractor.read()))
+            .flatMap(object => Observable.fromPromise(
+                this._transformers.reduce((promise, transformer) => promise.then(o => transformer.process(o)), Promise.resolve(object))
+            ))
+            .flatMap(object => {
+                return Observable.merge(...this._loaders.map(loader => Observable.fromPromise(loader.write(object))))
+            })
+            .do(null, err => {
                 this._state = EtlState.Error;
-                this.outputBuffer.removeAllListeners();
-                this.inputBuffer.removeAllListeners();
-                reject(err);
-            });
-            this.outputBuffer.once('end', () => {
+                return Observable.throw(err);
+            }, () => {
                 this._state = EtlState.Stopped;
-                resolve();
             });
-        });
     }
 
     /**

@@ -6,6 +6,7 @@ import {Etl, EtlState} from './Etl';
 import {IExtract} from './interfaces/IExtract';
 import {JsonExtractor} from './extractors/JsonExtractor';
 import {ILoad} from './interfaces/ILoad';
+import {Observable} from 'rxjs';
 
 let should = chai.should();
 chai.use(asPromised);
@@ -52,16 +53,9 @@ describe('Etl', () => {
             .addExtractor(extractor)
             .addLoader(loader)
             .start()
-            .then(() => {
-                try {
-                    loader.write.should.be.calledOnce;
-                    loader.write.should.be.calledWithExactly({foo: 'bar', hello: 'world'});
-                    done();
-                } catch (e) {
-                    done(e);
-                }
-            }, err => {
-                console.error(err);
+            .subscribe(null, null, () => {
+                loader.write.should.be.calledOnce;
+                loader.write.should.be.calledWithExactly({foo: 'bar', hello: 'world'});
                 done();
             });
     });
@@ -71,49 +65,57 @@ describe('Etl', () => {
             .addExtractor(arrayExtractor)
             .addLoader(loader)
             .start()
-            .then(() => {
-                try {
-                    loader.write.should.be.calledThrice;
-                    let spy:any = loader.write;
-                    spy.firstCall.should.be.calledWith({objId: 1, name: 'foobar'});
-                    spy.secondCall.should.be.calledWith({objId: 2, name: 'hello world'});
-                    spy.thirdCall.should.be.calledWith({objId: 3, name: 'third test'});
-                    done();
-                } catch (e) {
-                    done(e);
-                }
-            }, err => {
-                console.error(err);
+            .subscribe(null, null, () => {
+                loader.write.should.be.calledThrice;
+                let spy:any = loader.write;
+                spy.firstCall.should.be.calledWith({objId: 1, name: 'foobar'});
+                spy.secondCall.should.be.calledWith({objId: 2, name: 'hello world'});
+                spy.thirdCall.should.be.calledWith({objId: 3, name: 'third test'});
                 done();
             });
     });
 
-    it('should reject on extractor error', () => {
-        return etl
+    it('should call error on extractor error', done => {
+        etl
             .addExtractor({
-                read: () => Promise.reject(new Error('test'))
+                read: () => Observable.throw(new Error('test'))
             })
             .addLoader(loader)
-            .start().should.be.rejected;
+            .start()
+            .subscribe(null, () => {
+                done();
+            }, () => {
+                done(new Error('did not throw'));
+            });
     });
 
-    it('should reject on loader error', () => {
-        return etl
+    it('should call error on loader error', done => {
+        etl
             .addExtractor(extractor)
             .addLoader({
                 write: o => Promise.reject(new Error('test'))
             })
-            .start().should.be.rejected;
+            .start()
+            .subscribe(null, () => {
+                done();
+            }, () => {
+                done(new Error('did not throw'));
+            });
     });
 
-    it('should reject on transformer error'/*, () => {
-     return etl
-     .addExtractor(extractor)
-     .addLoader(loader)
-     .addTransformer({
-     process: o => Promise.reject(new Error('test'))
-     })
-     .start().should.be.rejected;
-     }*/);
+    it('should call error on transformer error', done => {
+        etl
+            .addExtractor(extractor)
+            .addLoader(loader)
+            .addTransformer({
+                process: o => Promise.reject(new Error('test'))
+            })
+            .start()
+            .subscribe(null, () => {
+                done();
+            }, () => {
+                done(new Error('did not throw'));
+            });
+    });
 
 });
