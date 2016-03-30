@@ -1,6 +1,6 @@
 "use strict";
-var es6_promise_1 = require('es6-promise');
-var Buffer_1 = require('./helpers/Buffer');
+var rxjs_1 = require('rxjs');
+var Promise = require('es6-promise').Promise;
 (function (EtlState) {
     EtlState[EtlState["Running"] = 0] = "Running";
     EtlState[EtlState["Stopped"] = 1] = "Stopped";
@@ -13,9 +13,6 @@ var Etl = (function () {
         this._transformers = [];
         this._loaders = [];
         this._state = EtlState.Stopped;
-        this.inputBuffer = new Buffer_1.Buffer();
-        this.outputBuffer = new Buffer_1.Buffer();
-        this.errorBuffer = new Buffer_1.Buffer();
     }
     Object.defineProperty(Etl.prototype, "extractors", {
         get: function () {
@@ -59,57 +56,18 @@ var Etl = (function () {
     };
     Etl.prototype.start = function () {
         var _this = this;
-        this.inputBuffer.on('write', function () {
-            _this.inputBuffer.read()
-                .then(function (object) {
-                    if (!_this.transformers.length) {
-                        return _this.outputBuffer.write(object);
-                    }
-                    _this.transformers
-                        .reduce(function (promise, transformer) {
-                            return promise.then(function (result) {
-                                return transformer.process(result);
-                            });
-                        }, es6_promise_1.Promise.resolve(object))
-                        .then(function (result) {
-                            return _this.outputBuffer.write(result);
-                        });
-            });
+        this._state = EtlState.Running;
+        return rxjs_1.Observable.merge.apply(rxjs_1.Observable, this._extractors.map(function (extractor) { return extractor.read(); }))
+            .flatMap(function (object) { return rxjs_1.Observable.fromPromise(_this._transformers.reduce(function (promise, transformer) { return promise.then(function (o) { return transformer.process(o); }); }, Promise.resolve(object))); })
+            .flatMap(function (object) {
+            return rxjs_1.Observable.merge.apply(rxjs_1.Observable, _this._loaders.map(function (loader) { return rxjs_1.Observable.fromPromise(loader.write(object)); }));
+        })
+            .do(null, function (err) {
+            _this._state = EtlState.Error;
+            return rxjs_1.Observable.throw(err);
+        }, function () {
+            _this._state = EtlState.Stopped;
         });
-        this.inputBuffer.on('end', function () {
-            return _this.outputBuffer.seal();
-        });
-        this.outputBuffer.on('write', function () {
-            return _this.outputBuffer.read().then(function (object) {
-                return es6_promise_1.Promise.all(_this.loaders.map(function (loader) {
-                    return loader.write(object);
-                }));
-            });
-        });
-        return es6_promise_1.Promise
-            .all(this.extractors.map(function (extractor) {
-                return extractor.read().then(function (result) {
-                    if (result instanceof Array) {
-                        return es6_promise_1.Promise.all(result.map(function (object) {
-                            return _this.inputBuffer.write(object);
-                        }));
-                    }
-                    return _this.inputBuffer.write(result);
-                });
-            }))
-            .then(function () {
-                return _this.inputBuffer.seal();
-            })
-            .then(function () {
-                return new es6_promise_1.Promise(function (resolve, reject) {
-                    _this.errorBuffer.once('error', function (err) {
-                        reject(err);
-            });
-                    _this.outputBuffer.once('end', function () {
-                        return resolve();
-                    });
-                });
-            });
     };
     Etl.prototype.reset = function () {
         this._extractors = [];

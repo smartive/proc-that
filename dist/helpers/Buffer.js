@@ -1,14 +1,11 @@
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
-        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-        function __() {
-            this.constructor = d;
-        }
-
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
 var events_1 = require('events');
-var es6_promise_1 = require('es6-promise');
+var Promise = require('es6-promise').Promise;
 var BufferSealedError = (function (_super) {
     __extends(BufferSealedError, _super);
     function BufferSealedError() {
@@ -20,9 +17,7 @@ exports.BufferSealedError = BufferSealedError;
 var Buffer = (function (_super) {
     __extends(Buffer, _super);
     function Buffer(initialSize) {
-        if (initialSize === void 0) {
-            initialSize = 10;
-        }
+        if (initialSize === void 0) { initialSize = 10; }
         _super.call(this);
         this.content = [];
         this._sealed = false;
@@ -61,6 +56,9 @@ var Buffer = (function (_super) {
     });
     Buffer.prototype.seal = function () {
         this._sealed = true;
+        if (this.isEmpty) {
+            this.emit('end');
+        }
     };
     Buffer.prototype.read = function () {
         var _this = this;
@@ -72,28 +70,24 @@ var Buffer = (function (_super) {
                 if (this.sealed)
                     this.emit('end');
             }
-            return es6_promise_1.Promise.resolve(content);
+            return Promise.resolve(content);
         }
-        return new es6_promise_1.Promise(function (resolve) {
-            _this.once('write', function () {
-                return resolve(_this.read());
-            });
+        return new Promise(function (resolve) {
+            _this.once('write', function () { return resolve(_this.read()); });
         });
     };
     Buffer.prototype.write = function (object) {
         var _this = this;
         if (this.sealed) {
-            return es6_promise_1.Promise.reject(new BufferSealedError());
+            return Promise.reject(new BufferSealedError());
         }
         if (!this.isFull) {
             this.content.push(object);
             this.emit('write', object);
-            return es6_promise_1.Promise.resolve(object);
+            return Promise.resolve(object);
         }
-        return new es6_promise_1.Promise(function (resolve) {
-            _this.once('release', function () {
-                return resolve(_this.write(object));
-            });
+        return new Promise(function (resolve) {
+            _this.once('release', function () { return resolve(_this.write(object)); });
         });
     };
     return Buffer;

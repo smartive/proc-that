@@ -1,3 +1,4 @@
+import { Observable } from 'rxjs';
 export interface IExtract {
-    read():Promise<any>;
+    read(): Observable<any>;
 }

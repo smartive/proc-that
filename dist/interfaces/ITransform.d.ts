@@ -1,3 +1,3 @@
 export interface ITransform {
-    process(object:any):Promise<any>;
+    process(object: any): Promise<any>;
 }

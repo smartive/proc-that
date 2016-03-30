@@ -1,3 +1,3 @@
 export interface ILoad {
-    write(object:any):Promise<boolean>;
+    write(object: any): Promise<void>;
 }

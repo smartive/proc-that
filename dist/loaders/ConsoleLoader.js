@@ -1,11 +1,11 @@
 "use strict";
-var es6_promise_1 = require('es6-promise');
+var Promise = require('es6-promise').Promise;
 var ConsoleLoader = (function () {
     function ConsoleLoader() {
     }
     ConsoleLoader.prototype.write = function (object) {
         console.log(object);
-        return es6_promise_1.Promise.resolve();
+        return Promise.resolve();
     };
     return ConsoleLoader;
 }());

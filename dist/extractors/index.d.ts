@@ -1,1 +1,1 @@
-export {JsonExtractor} from './JsonExtractor';
+export { JsonExtractor } from './JsonExtractor';

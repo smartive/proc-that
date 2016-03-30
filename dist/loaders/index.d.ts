@@ -1,1 +1,1 @@
-export {ConsoleLoader} from './ConsoleLoader';
+export { ConsoleLoader } from './ConsoleLoader';

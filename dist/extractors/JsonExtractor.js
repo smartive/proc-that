@@ -1,5 +1,5 @@
 "use strict";
-var es6_promise_1 = require('es6-promise');
+var rxjs_1 = require('rxjs');
 var path = require('path');
 var JsonExtractor = (function () {
     function JsonExtractor(filePath) {
@@ -7,11 +7,14 @@ var JsonExtractor = (function () {
     }
     JsonExtractor.prototype.read = function () {
         try {
-            var file = require(this.filePath);
-            return es6_promise_1.Promise.resolve(file);
+            var content = require(this.filePath);
+            if (!(content instanceof Array) && content.constructor !== Array) {
+                return rxjs_1.Observable.from([content]);
+            }
+            return rxjs_1.Observable.from(content);
         }
         catch (e) {
-            return es6_promise_1.Promise.reject(e);
+            return rxjs_1.Observable.throw(e);
         }
     };
     return JsonExtractor;
