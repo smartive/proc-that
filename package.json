@@ -8,7 +8,7 @@
     "pretest": "npm install && typings install && npm run clean && tsc",
     "test": "mocha --ui bdd --recursive ./build",
     "develop": "npm run clean && tsc -w",
-    "build": "rimraf build dist && tsc --outDir dist -d && trash dist/**/*.spec.js && trash dist/**/*.spec.js.map"
+    "build": "rimraf build dist && tsc --outDir dist -d && trash dist/**/*.spec*"
   },
   "keywords": [
     "etl",
