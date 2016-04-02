@@ -1,3 +1,3 @@
 export { Etl } from './Etl';
-export * from './extractors';
-export * from './loaders';
+export * from './extractors/JsonExtractor';
+export * from './loaders/ConsoleLoader';

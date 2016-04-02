@@ -4,6 +4,6 @@ function __export(m) {
 }
 var Etl_1 = require('./Etl');
 exports.Etl = Etl_1.Etl;
-__export(require('./extractors'));
-__export(require('./loaders'));
+__export(require('./extractors/JsonExtractor'));
+__export(require('./loaders/ConsoleLoader'));
 //# sourceMappingURL=index.js.map
