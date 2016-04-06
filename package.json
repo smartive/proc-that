@@ -3,13 +3,13 @@
   "version": "0.2.3",
   "description": "proc(ess)-that - easy extendable etl tool for nodejs written in typesript",
   "main": "dist/index.js",
-  "typigns": "dist/main.d.ts",
+  "typings": "dist/index.d.ts",
   "scripts": {
     "clean": "rimraf build",
     "pretest": "npm install && typings install && npm run clean && tsc",
     "test": "mocha --ui bdd --recursive ./build",
     "develop": "npm run clean && tsc -w",
-    "build": "rimraf build dist && tsc --outDir dist -d && trash dist/**/*.spec* && trash dist/Etl.spec* && typings bundle --out dist && trash dist/browser.d.ts"
+    "build": "rimraf build dist && tsc --outDir dist -d && trash dist/**/*.spec* && trash dist/Etl.spec*"
   },
   "keywords": [
     "etl",
