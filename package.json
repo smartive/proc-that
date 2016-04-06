@@ -1,6 +1,6 @@
 {
   "name": "proc-that",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "proc(ess)-that - easy extendable etl tool for nodejs written in typesript",
   "main": "dist/index.js",
   "typigns": "dist/main.d.ts",
