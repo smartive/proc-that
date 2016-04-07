@@ -9,7 +9,7 @@
     "pretest": "npm install && typings install && npm run clean && tsc",
     "test": "mocha --ui bdd --recursive ./build",
     "develop": "npm run clean && tsc -w",
-    "build": "rimraf build dist && tsc --outDir dist -d && trash dist/**/*.spec* && trash dist/Etl.spec*"
+    "build": "rimraf build dist && tsc --outDir dist -d && del './dist/**/*.spec*'"
   },
   "keywords": [
     "etl",
@@ -26,11 +26,11 @@
   "devDependencies": {
     "chai": "^3.5.0",
     "chai-as-promised": "^5.3.0",
+    "del-cli": "^0.2.0",
     "mocha": "^2.4.5",
     "rimraf": "^2.5.2",
     "sinon": "^1.17.3",
     "sinon-chai": "^2.8.0",
-    "trash-cli": "^1.2.1",
     "typescript": "^1.8.9",
     "typings": "^0.7.11"
   },
