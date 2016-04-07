@@ -3,8 +3,6 @@ import {ITransform} from './interfaces/ITransform';
 import {ILoad} from './interfaces/ILoad';
 import {Observable} from 'rxjs';
 
-let Promise = require('es6-promise').Promise;
-
 export enum EtlState {
     Running,
     Stopped,
@@ -68,12 +66,8 @@ export class Etl {
 
         return Observable
             .merge(...this._extractors.map(extractor => extractor.read()))
-            .flatMap(object => Observable.fromPromise(
-                this._transformers.reduce((promise, transformer) => promise.then(o => transformer.process(o)), Promise.resolve(object))
-            ))
-            .flatMap(object => {
-                return Observable.merge(...this._loaders.map(loader => Observable.fromPromise(loader.write(object))))
-            })
+            .flatMap(object => this._transformers.reduce((observable, transformer) => observable.flatMap(o => transformer.process(o)), Observable.of(object)))
+            .flatMap(object => Observable.merge(...this._loaders.map(loader => Observable.fromPromise(loader.write(object)))))
             .do(null, err => {
                 this._state = EtlState.Error;
                 return Observable.throw(err);

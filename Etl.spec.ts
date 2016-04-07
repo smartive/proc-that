@@ -14,11 +14,11 @@ chai.use(sinonChai);
 
 describe('Etl', () => {
 
-    let etl:Etl;
-    let extractor:IExtract = new JsonExtractor('./.testdata/json-extractor.object.json');
-    let arrayExtractor:IExtract = new JsonExtractor('./.testdata/json-extractor.array.json');
-    let loader:ILoad;
-    let stub:any;
+    let etl: Etl;
+    let extractor: IExtract = new JsonExtractor('./.testdata/json-extractor.object.json');
+    let arrayExtractor: IExtract = new JsonExtractor('./.testdata/json-extractor.array.json');
+    let loader: ILoad;
+    let stub: any;
 
     beforeEach(() => {
         etl = new Etl();
@@ -38,7 +38,7 @@ describe('Etl', () => {
 
     it('should reset correctly', () => {
         etl.addExtractor({
-            read: function () {
+            read: function() {
                 return null;
             }
         });
@@ -55,7 +55,7 @@ describe('Etl', () => {
             .start()
             .subscribe(null, null, () => {
                 loader.write.should.be.calledOnce;
-                loader.write.should.be.calledWithExactly({foo: 'bar', hello: 'world'});
+                loader.write.should.be.calledWithExactly({ foo: 'bar', hello: 'world' });
                 done();
             });
     });
@@ -67,10 +67,10 @@ describe('Etl', () => {
             .start()
             .subscribe(null, null, () => {
                 loader.write.should.be.calledThrice;
-                let spy:any = loader.write;
-                spy.firstCall.should.be.calledWith({objId: 1, name: 'foobar'});
-                spy.secondCall.should.be.calledWith({objId: 2, name: 'hello world'});
-                spy.thirdCall.should.be.calledWith({objId: 3, name: 'third test'});
+                let spy: any = loader.write;
+                spy.firstCall.should.be.calledWith({ objId: 1, name: 'foobar' });
+                spy.secondCall.should.be.calledWith({ objId: 2, name: 'hello world' });
+                spy.thirdCall.should.be.calledWith({ objId: 3, name: 'third test' });
                 done();
             });
     });
@@ -108,13 +108,47 @@ describe('Etl', () => {
             .addExtractor(extractor)
             .addLoader(loader)
             .addTransformer({
-                process: o => Promise.reject(new Error('test'))
+                process: o => Observable.throw(new Error('test'))
             })
             .start()
             .subscribe(null, () => {
                 done();
             }, () => {
                 done(new Error('did not throw'));
+            });
+    });
+
+    it('should process simple object with transformer', done => {
+        let spy = sinon.spy();
+        etl
+            .addExtractor(extractor)
+            .addLoader(loader)
+            .addTransformer({
+                process: o => Observable.of(o)
+            })
+            .start()
+            .subscribe(spy, () => {
+                done(new Error('did throw'));
+            }, () => {
+                spy.should.be.calledOnce;
+                done();
+            });
+    });
+
+    it('should process simple array with transformer (flat)', done => {
+        let spy = sinon.spy();
+        etl
+            .addExtractor(arrayExtractor)
+            .addLoader(loader)
+            .addTransformer({
+                process: o => Observable.from([o, o])
+            })
+            .start()
+            .subscribe(spy, () => {
+                done(new Error('did throw'));
+            }, () => {
+                spy.should.have.callCount(6);
+                done();
             });
     });
 
