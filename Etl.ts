@@ -18,38 +18,38 @@ export enum EtlState {
  * This processor is modular, you can find other implemented loaders and extractors in the README
  */
 export class Etl {
-    private _extractors:IExtract[] = [];
-    private _transformers:ITransform[] = [];
-    private _loaders:ILoad[] = [];
-    private _state:EtlState = EtlState.Stopped;
+    private _extractors: IExtract[] = [];
+    private _transformers: ITransform[] = [];
+    private _loaders: ILoad[] = [];
+    private _state: EtlState = EtlState.Stopped;
 
-    public get extractors():IExtract[] {
+    public get extractors(): IExtract[] {
         return this._extractors;
     }
 
-    public get transformers():ITransform[] {
+    public get transformers(): ITransform[] {
         return this._transformers;
     }
 
-    public get loaders():ILoad[] {
+    public get loaders(): ILoad[] {
         return this._loaders;
     }
 
-    public get state():EtlState {
+    public get state(): EtlState {
         return this._state;
     }
 
-    public addExtractor(extract:IExtract):Etl {
+    public addExtractor(extract: IExtract): Etl {
         this._extractors.push(extract);
         return this;
     }
 
-    public addTransformer(transformer:ITransform):Etl {
+    public addTransformer(transformer: ITransform): Etl {
         this._transformers.push(transformer);
         return this;
     }
 
-    public addLoader(loader:ILoad):Etl {
+    public addLoader(loader: ILoad): Etl {
         this._loaders.push(loader);
         return this;
     }
@@ -63,7 +63,7 @@ export class Etl {
      *                            during the "next" process step you get update on how many are processed yet.
      *                            Throws when any step produces an error.
      */
-    public start():Observable<any> {
+    public start(): Observable<any> {
         this._state = EtlState.Running;
 
         return Observable
@@ -85,7 +85,7 @@ export class Etl {
     /**
      * Resets the whole Etl object. Deletes all modifiers and resets the state.
      */
-    public reset():void {
+    public reset(): void {
         this._extractors = [];
         this._transformers = [];
         this._loaders = [];

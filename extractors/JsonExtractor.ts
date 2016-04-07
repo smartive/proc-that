@@ -6,13 +6,13 @@ import path = require('path');
  * Extractor that reads a JSON file at a given filepath. The path is resolved relatively to the running tasks root dir.
  */
 export class JsonExtractor implements IExtract {
-    private filePath:string;
+    private filePath: string;
 
-    constructor(filePath:string) {
+    constructor(filePath: string) {
         this.filePath = path.resolve(process.cwd(), filePath);
     }
 
-    public read():Observable<any> {
+    public read(): Observable<any> {
         try {
             let content = require(this.filePath);
             if (!(content instanceof Array) && content.constructor !== Array) {

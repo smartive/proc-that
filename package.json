@@ -31,6 +31,7 @@
     "rimraf": "^2.5.2",
     "sinon": "^1.17.3",
     "sinon-chai": "^2.8.0",
+    "tslint": "^3.7.1",
     "typescript": "^1.8.9",
     "typings": "^0.7.11"
   },
