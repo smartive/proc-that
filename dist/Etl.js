@@ -1,6 +1,5 @@
 "use strict";
 var rxjs_1 = require('rxjs');
-var Promise = require('es6-promise').Promise;
 (function (EtlState) {
     EtlState[EtlState["Running"] = 0] = "Running";
     EtlState[EtlState["Stopped"] = 1] = "Stopped";
@@ -58,10 +57,8 @@ var Etl = (function () {
         var _this = this;
         this._state = EtlState.Running;
         return rxjs_1.Observable.merge.apply(rxjs_1.Observable, this._extractors.map(function (extractor) { return extractor.read(); }))
-            .flatMap(function (object) { return rxjs_1.Observable.fromPromise(_this._transformers.reduce(function (promise, transformer) { return promise.then(function (o) { return transformer.process(o); }); }, Promise.resolve(object))); })
-            .flatMap(function (object) {
-            return rxjs_1.Observable.merge.apply(rxjs_1.Observable, _this._loaders.map(function (loader) { return rxjs_1.Observable.fromPromise(loader.write(object)); }));
-        })
+            .flatMap(function (object) { return _this._transformers.reduce(function (observable, transformer) { return observable.flatMap(function (o) { return transformer.process(o); }); }, rxjs_1.Observable.of(object)); })
+            .flatMap(function (object) { return rxjs_1.Observable.merge.apply(rxjs_1.Observable, _this._loaders.map(function (loader) { return rxjs_1.Observable.fromPromise(loader.write(object)); })); })
             .do(null, function (err) {
             _this._state = EtlState.Error;
             return rxjs_1.Observable.throw(err);

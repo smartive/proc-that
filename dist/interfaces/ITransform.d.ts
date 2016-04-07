@@ -1,3 +1,4 @@
+import { Observable } from 'rxjs';
 export interface ITransform {
-    process(object: any): Promise<any>;
+    process(object: any): Observable<any>;
 }
