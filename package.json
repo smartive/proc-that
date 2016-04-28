@@ -2,8 +2,7 @@
   "name": "proc-that",
   "version": "0.3.1",
   "description": "proc(ess)-that - easy extendable etl tool for nodejs written in typesript",
-  "main": "dist/index.js",
-  "typings": "dist/index.d.ts",
+  "main": "index.js",
   "scripts": {
     "clean": "rimraf build",
     "bootstrap": "npm install && typings install",
