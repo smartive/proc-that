@@ -6,7 +6,8 @@
   "typings": "dist/index.d.ts",
   "scripts": {
     "clean": "rimraf build",
-    "pretest": "npm install && typings install && npm run clean && tsc",
+    "bootstrap": "npm install && typings install",
+    "pretest": "npm run bootstrap && npm run clean && tsc",
     "test": "mocha --ui bdd --recursive ./build",
     "precitest": "npm run bootstrap && npm run clean && tsc",
     "citest": "istanbul cover -x \"./build/**/*.spec.*\" _mocha --report lcovonly -- --ui bdd --recursive ./build",
