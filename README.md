@@ -7,6 +7,10 @@ A basic, hypothetic example could be: "Load data from a JSON array, snake_case a
 
 The package is written in `typescript` but can be used in plain javascript as well. 
 
+##### A bunch of badges
+
+[![Build Status](https://travis-ci.org/smartive/proc-that.svg?maxAge=3600)](https://travis-ci.org/smartive/proc-that) [![npm](https://img.shields.io/npm/v/proc-that.svg?maxAge=3600)](https://www.npmjs.com/package/proc-that) [![Coverage status](https://img.shields.io/coveralls/smartive/proc-that.svg?maxAge=3600)](https://coveralls.io/github/smartive/proc-that)
+
 ## Usage
 
 ```typescript
