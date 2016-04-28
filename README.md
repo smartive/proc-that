@@ -1,4 +1,4 @@
-# proc-that [![Build Status](https://travis-ci.org/buehler/proc-that.svg?branch=master)](https://travis-ci.org/buehler/proc-that)
+# proc-that
 proc(ess)-that - easy extendable etl tool for nodejs written in typescript.
 
 Basically instantiate the `Etl` class and add extractors (which pull data from a datasource), transformers (which process the extracted data) and loaders (they load the results into a sink).
@@ -6,6 +6,10 @@ Basically instantiate the `Etl` class and add extractors (which pull data from a
 A basic, hypothetic example could be: "Load data from a JSON array, snake_case all properties and store those objects into a mongoDB."
 
 The package is written in `typescript` but can be used in plain javascript as well. 
+
+##### A bunch of badges
+
+[![Build Status](https://travis-ci.org/smartive/proc-that.svg?maxAge=3600)](https://travis-ci.org/smartive/proc-that) [![npm](https://img.shields.io/npm/v/proc-that.svg?maxAge=3600)](https://www.npmjs.com/package/proc-that) [![Coverage status](https://img.shields.io/coveralls/smartive/proc-that.svg?maxAge=3600)](https://coveralls.io/github/smartive/proc-that) [![license](https://img.shields.io/github/license/smartive/proc-that.svg?maxAge=2592000)](https://github.com/smartive/proc-that)
 
 ## Usage
 

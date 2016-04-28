@@ -1,15 +1,16 @@
 {
   "name": "proc-that",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "proc(ess)-that - easy extendable etl tool for nodejs written in typesript",
-  "main": "dist/index.js",
-  "typings": "dist/index.d.ts",
+  "main": "index.js",
   "scripts": {
     "clean": "rimraf build",
-    "pretest": "npm install && typings install && npm run clean && tsc",
+    "bootstrap": "npm install && typings install",
+    "pretest": "npm run bootstrap && npm run clean && tsc",
     "test": "mocha --ui bdd --recursive ./build",
-    "develop": "npm run clean && tsc -w",
-    "build": "rimraf build dist && tsc --outDir dist -d && del './dist/**/*.spec*'"
+    "precitest": "npm run bootstrap && npm run clean && tsc",
+    "citest": "istanbul cover -x \"**/*.spec.*\" _mocha --report lcovonly -- --ui bdd --recursive ./build",
+    "develop": "npm run clean && tsc -w"
   },
   "keywords": [
     "etl",
@@ -27,7 +28,9 @@
     "chai": "^3.5.0",
     "chai-as-promised": "^5.3.0",
     "del-cli": "^0.2.0",
+    "istanbul": "^0.4.3",
     "mocha": "^2.4.5",
+    "mocha-lcov-reporter": "^1.2.0",
     "rimraf": "^2.5.2",
     "sinon": "^1.17.3",
     "sinon-chai": "^2.8.0",
