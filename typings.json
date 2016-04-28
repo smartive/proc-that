@@ -2,7 +2,7 @@
   "dependencies": {},
   "ambientDependencies": {
     "es6-shim": "registry:dt/es6-shim#0.31.2+20160317120654",
-    "node": "registry:dt/node#4.0.0+20160330064709"
+    "node": "registry:dt/node#4.0.0+20160423143914"
   },
   "ambientDevDependencies": {
     "mocha": "registry:dt/mocha#2.2.5+20160317120654"

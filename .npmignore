@@ -25,3 +25,18 @@ node_modules
 
 # Optional REPL history
 .node_repl_history
+
+
+# Typescript stuff
+typings
+build
+docs
+coverage
+
+*.ts
+!*.d.ts
+*.js.map
+*.spec.js
+*.spec.ts
+*.spec.d.ts
+*.spec.js.map
