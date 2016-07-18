@@ -6,5 +6,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - Changelog
 
+### Changed
+- Updated dependencies
 
-[Unreleased]: https://github.com/smartive/proc-that/tree/develop
+
+[Unreleased]: https://github.com/smartive/giuseppe/compare/v0.3.2...master
