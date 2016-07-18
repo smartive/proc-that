@@ -1,6 +1,6 @@
 import {Extractor} from './interfaces/Extractor';
 import {ITransform} from './interfaces/ITransform';
-import {ILoad} from './interfaces/ILoad';
+import {Loader} from './interfaces/Loader';
 import {Observable} from 'rxjs';
 
 export enum EtlState {
@@ -18,7 +18,7 @@ export enum EtlState {
 export class Etl {
     private _extractors: Extractor[] = [];
     private _transformers: ITransform[] = [];
-    private _loaders: ILoad[] = [];
+    private _loaders: Loader[] = [];
     private _state: EtlState = EtlState.Stopped;
 
     public get extractors(): Extractor[] {
@@ -29,7 +29,7 @@ export class Etl {
         return this._transformers;
     }
 
-    public get loaders(): ILoad[] {
+    public get loaders(): Loader[] {
         return this._loaders;
     }
 
@@ -47,7 +47,7 @@ export class Etl {
         return this;
     }
 
-    public addLoader(loader: ILoad): Etl {
+    public addLoader(loader: Loader): Etl {
         this._loaders.push(loader);
         return this;
     }

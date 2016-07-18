@@ -5,7 +5,7 @@ import sinonChai = require('sinon-chai');
 import {Etl, EtlState} from './Etl';
 import {Extractor} from './interfaces/Extractor';
 import {JsonExtractor} from './extractors/JsonExtractor';
-import {ILoad} from './interfaces/ILoad';
+import {Loader} from './interfaces/Loader';
 import {Observable} from 'rxjs';
 
 let should = chai.should();
@@ -17,7 +17,7 @@ describe('Etl', () => {
     let etl: Etl;
     let extractor: Extractor = new JsonExtractor('./.testdata/json-extractor.object.json');
     let arrayExtractor: Extractor = new JsonExtractor('./.testdata/json-extractor.array.json');
-    let loader: ILoad;
+    let loader: Loader;
     let stub: any;
 
     beforeEach(() => {
