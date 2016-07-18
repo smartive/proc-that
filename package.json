@@ -17,6 +17,9 @@
     "node",
     "typescript"
   ],
+  "engines": {
+    "node": ">=4.2"
+  },
   "repository": {
     "type": "git",
     "url": "git@github.com:buehler/proc-that.git"

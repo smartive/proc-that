@@ -9,6 +9,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 - Updated dependencies
 - Breaking: return type of loaders are now `Observable<any>`
+- Breaking: changed interface names to match conventions
 
 
 [Unreleased]: https://github.com/smartive/giuseppe/compare/v0.3.2...master

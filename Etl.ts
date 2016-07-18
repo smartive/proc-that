@@ -1,6 +1,6 @@
-import {IExtract} from './interfaces/IExtract';
-import {ITransform} from './interfaces/ITransform';
-import {ILoad} from './interfaces/ILoad';
+import {Extractor} from './interfaces/Extractor';
+import {Transformer} from './interfaces/Transformer';
+import {Loader} from './interfaces/Loader';
 import {Observable} from 'rxjs';
 
 export enum EtlState {
@@ -16,20 +16,20 @@ export enum EtlState {
  * This processor is modular, you can find other implemented loaders and extractors in the README
  */
 export class Etl {
-    private _extractors: IExtract[] = [];
-    private _transformers: ITransform[] = [];
-    private _loaders: ILoad[] = [];
+    private _extractors: Extractor[] = [];
+    private _transformers: Transformer[] = [];
+    private _loaders: Loader[] = [];
     private _state: EtlState = EtlState.Stopped;
 
-    public get extractors(): IExtract[] {
+    public get extractors(): Extractor[] {
         return this._extractors;
     }
 
-    public get transformers(): ITransform[] {
+    public get transformers(): Transformer[] {
         return this._transformers;
     }
 
-    public get loaders(): ILoad[] {
+    public get loaders(): Loader[] {
         return this._loaders;
     }
 
@@ -37,17 +37,17 @@ export class Etl {
         return this._state;
     }
 
-    public addExtractor(extract: IExtract): Etl {
+    public addExtractor(extract: Extractor): Etl {
         this._extractors.push(extract);
         return this;
     }
 
-    public addTransformer(transformer: ITransform): Etl {
+    public addTransformer(transformer: Transformer): Etl {
         this._transformers.push(transformer);
         return this;
     }
 
-    public addLoader(loader: ILoad): Etl {
+    public addLoader(loader: Loader): Etl {
         this._loaders.push(loader);
         return this;
     }
