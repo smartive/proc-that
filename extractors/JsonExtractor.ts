@@ -1,11 +1,11 @@
-import {IExtract} from '../interfaces/IExtract';
+import {Extractor} from '../interfaces/Extractor';
 import {Observable} from 'rxjs';
 import path = require('path');
 
 /**
  * Extractor that reads a JSON file at a given filepath. The path is resolved relatively to the running tasks root dir.
  */
-export class JsonExtractor implements IExtract {
+export class JsonExtractor implements Extractor {
     private filePath: string;
 
     constructor(filePath: string) {

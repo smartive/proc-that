@@ -17,7 +17,7 @@ The package is written in `typescript` but can be used in plain javascript as we
 import {Etl} from 'proc-that';
 
 new Etl()
-    .addExtractor(/* class that implements IExtract */)
+    .addExtractor(/* class that implements Extractor */)
     .addTransformer(/* class that implements ITransform */)
     .addLoader(/* class that implements ILoad */)
     .start()

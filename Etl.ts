@@ -1,4 +1,4 @@
-import {IExtract} from './interfaces/IExtract';
+import {Extractor} from './interfaces/Extractor';
 import {ITransform} from './interfaces/ITransform';
 import {ILoad} from './interfaces/ILoad';
 import {Observable} from 'rxjs';
@@ -16,12 +16,12 @@ export enum EtlState {
  * This processor is modular, you can find other implemented loaders and extractors in the README
  */
 export class Etl {
-    private _extractors: IExtract[] = [];
+    private _extractors: Extractor[] = [];
     private _transformers: ITransform[] = [];
     private _loaders: ILoad[] = [];
     private _state: EtlState = EtlState.Stopped;
 
-    public get extractors(): IExtract[] {
+    public get extractors(): Extractor[] {
         return this._extractors;
     }
 
@@ -37,7 +37,7 @@ export class Etl {
         return this._state;
     }
 
-    public addExtractor(extract: IExtract): Etl {
+    public addExtractor(extract: Extractor): Etl {
         this._extractors.push(extract);
         return this;
     }
