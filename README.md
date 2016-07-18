@@ -18,7 +18,7 @@ import {Etl} from 'proc-that';
 
 new Etl()
     .addExtractor(/* class that implements Extractor */)
-    .addTransformer(/* class that implements ITransform */)
+    .addTransformer(/* class that implements Transformer */)
     .addLoader(/* class that implements Loader */)
     .start()
     .subscribe(progress, error, success);
