@@ -1,6 +1,8 @@
+import {Observable} from 'rxjs';
+
 /**
- * Loader interface. Provides ".write(obj)" method that returns a Promise when the write action is finished.
+ * Loader interface. Provides ".write(obj)" method that returns an observable with the loaded value.
  */
 export interface ILoad {
-    write(object: any): Promise<void>;
+    write(object: any): Observable<any>;
 }

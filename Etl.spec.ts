@@ -23,10 +23,10 @@ describe('Etl', () => {
     beforeEach(() => {
         etl = new Etl();
         loader = {
-            write: o => Promise.resolve(o)
+            write: o => Observable.of(o)
         };
 
-        stub = sinon.stub(loader, 'write', o => Promise.resolve(o));
+        stub = sinon.stub(loader, 'write', o => Observable.of(o));
     });
 
     it('should initialize with correct default params', () => {
@@ -93,7 +93,7 @@ describe('Etl', () => {
         etl
             .addExtractor(extractor)
             .addLoader({
-                write: o => Promise.reject(new Error('test'))
+                write: o => Observable.throw(new Error('test'))
             })
             .start()
             .subscribe(null, () => {
