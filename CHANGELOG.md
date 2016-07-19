@@ -5,7 +5,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 
 
-[v0.4.0]
+## [v0.4.0]
 ### Added
 - Changelog
 
@@ -15,5 +15,5 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Breaking: changed interface names to match conventions
 
 
-[Unreleased]: https://github.com/smartive/giuseppe/compare/v0.4.0...master
-[v0.4.0]: https://github.com/smartive/giuseppe/compare/v0.3.2...v0.4.0
+[Unreleased]: https://github.com/smartive/proc-that/compare/v0.4.0...master
+[v0.4.0]: https://github.com/smartive/proc-that/compare/v0.3.2...v0.4.0
