@@ -1,5 +1,7 @@
 import {Extractor} from './interfaces/Extractor';
+import {GeneralTransformer} from './interfaces/GeneralTransformer';
 import {Transformer} from './interfaces/Transformer';
+import {TransformerTransformer} from './transformers/TransformerTransformer';
 import {Loader} from './interfaces/Loader';
 import {Observable} from 'rxjs';
 
@@ -17,12 +19,17 @@ export enum EtlState {
  */
 export class Etl {
     private _extractors: Extractor[] = [];
+    private _generalTransformers: GeneralTransformer[] = [];
     private _transformers: Transformer[] = [];
     private _loaders: Loader[] = [];
     private _state: EtlState = EtlState.Stopped;
 
     public get extractors(): Extractor[] {
         return this._extractors;
+    }
+
+    public get GeneralTransformer(): GeneralTransformer[] {
+        return this._generalTransformers;
     }
 
     public get transformers(): Transformer[] {
@@ -42,7 +49,13 @@ export class Etl {
         return this;
     }
 
+    public addGeneralTransformer(transformer: GeneralTransformer): Etl {
+        this._generalTransformers.push(transformer);
+        return this;
+    }
+
     public addTransformer(transformer: Transformer): Etl {
+        this.addGeneralTransformer(new TransformerTransformer(transformer))
         this._transformers.push(transformer);
         return this;
     }
@@ -66,7 +79,7 @@ export class Etl {
 
         return Observable
             .merge(...this._extractors.map(extractor => extractor.read()))
-            .flatMap(object => this._transformers.reduce((observable, transformer) => observable.flatMap(o => transformer.process(o)), Observable.of(object)))
+            .flatMap(object => this._generalTransformers.reduce((observable, transformer) => transformer.process(observable), Observable.of(object)))
             .flatMap(object => Observable.merge(...this._loaders.map(loader => loader.write(object))))
             .do(null, err => {
                 this._state = EtlState.Error;
