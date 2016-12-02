@@ -1,7 +1,7 @@
 import {Extractor} from './interfaces/Extractor';
 import {GeneralTransformer} from './interfaces/GeneralTransformer';
 import {Transformer} from './interfaces/Transformer';
-import {TransformerTransformer} from './transformers/TransformerTransformer';
+import {MapTransformer} from './transformers/MapTransformer';
 import {Loader} from './interfaces/Loader';
 import {Observable} from 'rxjs';
 
@@ -55,7 +55,7 @@ export class Etl {
     }
 
     public addTransformer(transformer: Transformer): Etl {
-        this.addGeneralTransformer(new TransformerTransformer(transformer))
+        this.addGeneralTransformer(new MapTransformer(transformer))
         this._transformers.push(transformer);
         return this;
     }

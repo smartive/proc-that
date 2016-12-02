@@ -2,7 +2,7 @@ import {GeneralTransformer} from '../interfaces/GeneralTransformer';
 import {Transformer} from '../interfaces/Transformer';
 import {Observable} from 'rxjs';
 
-export class TransformerTransformer implements GeneralTransformer {
+export class MapTransformer implements GeneralTransformer {
     constructor(private transformer: Transformer) {}
 
     process(observable: Observable<any>): Observable<any> {
