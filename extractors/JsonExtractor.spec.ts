@@ -4,7 +4,6 @@ import sinon = require('sinon');
 import sinonChai = require('sinon-chai');
 import {JsonExtractor} from './JsonExtractor';
 
-let should = chai.should();
 chai.use(asPromised);
 chai.use(sinonChai);
 
@@ -12,12 +11,12 @@ describe('JsonExtractor', () => {
 
     it('should return an observable', () => {
         let ext = new JsonExtractor('./.testdata/json-extractor.object.json');
-        ext.read().should.be.an('object')
+        ext.read().should.be.an('object');
     });
 
     it('should get correct path', () => {
         let ext = new JsonExtractor('hello');
-        let anyExt:any = ext;
+        let anyExt: any = ext;
         let result = process.cwd() + '/hello';
         anyExt.filePath.should.equal(result);
     });
@@ -47,7 +46,7 @@ describe('JsonExtractor', () => {
         ext.read().subscribe(() => {
             done(new Error('did not throw'));
         }, () => {
-            done()
+            done();
         });
     });
 

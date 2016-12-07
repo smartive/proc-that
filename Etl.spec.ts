@@ -1,3 +1,4 @@
+import { MatchMergeTransformer } from './transformers/MatchMergeTransformer';
 import chai = require('chai');
 import asPromised = require('chai-as-promised');
 import sinon = require('sinon');
@@ -17,6 +18,7 @@ describe('Etl', () => {
     let etl: Etl;
     let extractor: Extractor = new JsonExtractor('./.testdata/json-extractor.object.json');
     let arrayExtractor: Extractor = new JsonExtractor('./.testdata/json-extractor.array.json');
+    let matchMergeExtractor: Extractor = new JsonExtractor('./.testdata/match-merge.json');
     let loader: Loader;
     let stub: any;
 
@@ -151,5 +153,57 @@ describe('Etl', () => {
                 done();
             });
     });
+
+    it('should process a general transformer', done => {
+        let spy = sinon.spy();
+        etl
+            .addExtractor(arrayExtractor)
+            .addLoader(loader)
+            .addGeneralTransformer({
+                process: o => o.reduce((x, y) => x + y.objId, 0)
+            })
+            .start()
+            .subscribe(spy, () => {
+                done(new Error('did throw'));
+            }, () => {
+                spy.should.be.calledOnce;
+                spy.should.be.calledWith(6);
+                done();
+            });
+    });
+
+    it('should process a match-merge transformer', done => {
+        let spy = sinon.spy();
+        etl
+            .addExtractor(matchMergeExtractor)
+            .addLoader(loader)
+            .addGeneralTransformer(new MatchMergeTransformer(
+                (o1, o2) => {
+                    return o1.location === o2.location;
+                },
+                (o1, o2) => {
+                    return {
+                        location: o1.location,
+                        things: [...o1.things, ...o2.things]
+                    };
+                }
+            ))
+            .start()
+            .subscribe(spy, () => {
+                done(new Error('did throw'));
+            }, () => {
+                spy.should.be.calledTwice;
+                spy.firstCall.should.be.calledWith({
+                    location: "A",
+                    things: ["a", "c"]
+                });
+                spy.secondCall.should.be.calledWith({
+                    location: "B",
+                    things: ["b", "d"]
+                });
+                done();
+            });
+    });
+
 
 });

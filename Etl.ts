@@ -1,5 +1,7 @@
 import {Extractor} from './interfaces/Extractor';
+import {GeneralTransformer} from './interfaces/GeneralTransformer';
 import {Transformer} from './interfaces/Transformer';
+import {MapTransformer} from './transformers/MapTransformer';
 import {Loader} from './interfaces/Loader';
 import {Observable} from 'rxjs';
 
@@ -17,12 +19,17 @@ export enum EtlState {
  */
 export class Etl {
     private _extractors: Extractor[] = [];
+    private _generalTransformers: GeneralTransformer[] = [];
     private _transformers: Transformer[] = [];
     private _loaders: Loader[] = [];
     private _state: EtlState = EtlState.Stopped;
 
     public get extractors(): Extractor[] {
         return this._extractors;
+    }
+
+    public get generalTransformers(): GeneralTransformer[] {
+        return this._generalTransformers;
     }
 
     public get transformers(): Transformer[] {
@@ -42,7 +49,13 @@ export class Etl {
         return this;
     }
 
+    public addGeneralTransformer(transformer: GeneralTransformer): Etl {
+        this._generalTransformers.push(transformer);
+        return this;
+    }
+
     public addTransformer(transformer: Transformer): Etl {
+        this.addGeneralTransformer(new MapTransformer(transformer));
         this._transformers.push(transformer);
         return this;
     }
@@ -53,9 +66,9 @@ export class Etl {
     }
 
     /**
-     * Starts the etl process. First, all extractors are ran in parallel and deliver their results into an observable.
+     * Starts the etl process. First, all extractors are run in parallel and deliver their results into an observable.
      * Once the buffer gets a result, it transfers all objects through the transformers (one by one).
-     * After that, the transformed results are ran through all loaders in parallel.
+     * After that, the transformed results are run through all loaders in parallel.
      *
      * @returns {Observable<any>} Observable that completes when the process is finished,
      *                            during the "next" process step you get update on how many are processed yet.
@@ -64,9 +77,10 @@ export class Etl {
     public start(): Observable<any> {
         this._state = EtlState.Running;
 
-        return Observable
-            .merge(...this._extractors.map(extractor => extractor.read()))
-            .flatMap(object => this._transformers.reduce((observable, transformer) => observable.flatMap(o => transformer.process(o)), Observable.of(object)))
+        let observable = Observable
+            .merge(...this._extractors.map(extractor => extractor.read()));
+
+        return this._generalTransformers.reduce((observable, transformer) => transformer.process(observable), observable)
             .flatMap(object => Observable.merge(...this._loaders.map(loader => loader.write(object))))
             .do(null, err => {
                 this._state = EtlState.Error;
