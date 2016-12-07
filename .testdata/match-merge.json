@@ -1,0 +1,18 @@
+[
+  {
+    "location": "A",
+    "things": ["a"]
+  },
+  {
+    "location": "B",
+    "things": ["b"]
+  },
+  {
+    "location": "A",
+    "things": ["c"]
+  },
+  {
+    "location": "B",
+    "things": ["d"]
+  }
+]
