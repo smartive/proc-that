@@ -5,7 +5,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 ## Added
 - General transformers
-- Map-merge transformers
+- Match-merge transformers
 
 ## [v0.4.0]
 ### Added
