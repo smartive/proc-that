@@ -28,7 +28,7 @@ export class Etl {
         return this._extractors;
     }
 
-    public get GeneralTransformer(): GeneralTransformer[] {
+    public get generalTransformers(): GeneralTransformer[] {
         return this._generalTransformers;
     }
 
