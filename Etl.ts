@@ -80,9 +80,8 @@ export class Etl {
         let observable = Observable
             .merge(...this._extractors.map(extractor => extractor.read()));
 
-        observable = this._generalTransformers.reduce((observable, transformer) => transformer.process(observable), observable);
-
-        return observable.flatMap(object => Observable.merge(...this._loaders.map(loader => loader.write(object))))
+        return this._generalTransformers.reduce((observable, transformer) => transformer.process(observable), observable)
+            .flatMap(object => Observable.merge(...this._loaders.map(loader => loader.write(object))))
             .do(null, err => {
                 this._state = EtlState.Error;
                 return Observable.throw(err);
