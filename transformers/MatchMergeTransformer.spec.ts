@@ -13,10 +13,17 @@ describe('MatchMergeTransformer', () => {
     it('should return an observable', () => {
         let spy = sinon.spy();
 
-        let t = new MatchMergeTransformer(
-            (o1, o2) => o1 === o2,
-            (o1, o2) => o1
-        );
+        class TestMatchMergeTransformer extends MatchMergeTransformer {
+            match(o1, o2) {
+                return o1 === o2;
+            }
+
+            merge(o1, o2) {
+                return o1;
+            }
+        }
+
+        let t = new TestMatchMergeTransformer();
         t.process(Observable.from([1, 2, 3, 2, 3]))
             .subscribe(spy, null, () => {
                 spy.should.be.calledThrice;
