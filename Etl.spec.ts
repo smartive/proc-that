@@ -174,20 +174,24 @@ describe('Etl', () => {
 
     it('should process a match-merge transformer', done => {
         let spy = sinon.spy();
+
+        class TestMatchTransformer extends MatchMergeTransformer {
+            match(o1, o2) {
+                return o1.location === o2.location;
+            }
+
+            merge(o1, o2) {
+                return {
+                    location: o1.location,
+                    things: [...o1.things, ...o2.things]
+                };
+            }
+        }
+
         etl
             .addExtractor(matchMergeExtractor)
             .addLoader(loader)
-            .addGeneralTransformer(new MatchMergeTransformer(
-                (o1, o2) => {
-                    return o1.location === o2.location;
-                },
-                (o1, o2) => {
-                    return {
-                        location: o1.location,
-                        things: [...o1.things, ...o2.things]
-                    };
-                }
-            ))
+            .addGeneralTransformer(new TestMatchTransformer)
             .start()
             .subscribe(spy, () => {
                 done(new Error('did throw'));
