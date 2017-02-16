@@ -23,8 +23,11 @@ export class Etl {
     private _transformers: Transformer[] = [];
     private _loaders: Loader[] = [];
     private _state: EtlState = EtlState.Stopped;
+    private _context: any = null;
 
-    public constructor(private _context?: any) {}
+    public constructor(_context?: any) {
+        this.setContext(context);
+    }
 
     public get extractors(): Extractor[] {
         return this._extractors;
