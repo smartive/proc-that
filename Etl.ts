@@ -25,8 +25,8 @@ export class Etl {
     private _state: EtlState = EtlState.Stopped;
     private _context: any = null;
 
-    public constructor(_context?: any) {
-        this.setContext(_context);
+    public constructor(context?: any) {
+        this.setContext(context);
     }
 
     public get extractors(): Extractor[] {
