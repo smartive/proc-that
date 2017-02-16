@@ -68,6 +68,22 @@ describe('Etl', () => {
 
     it('should pass context down the pipeline', done => {
         const context = 1;
+        etl = new Etl(context);
+        etl
+            .addExtractor(dummyExtractor)
+            .addTransformer(dummyTransformer)
+            .addLoader(dummyLoader)
+            .start()
+            .subscribe(null, null, () => {
+                dummyExtractor.read.should.be.calledWith(context);
+                dummyTransformer.process.should.be.calledWith(o, context);
+                dummyLoader.write.should.be.calledWith(o, context);
+                done();
+            });
+    });
+
+    it('should pass newly set context down the pipeline', done => {
+        const context = 1;
         etl
             .addExtractor(dummyExtractor)
             .addTransformer(dummyTransformer)

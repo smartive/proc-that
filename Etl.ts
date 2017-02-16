@@ -26,7 +26,7 @@ export class Etl {
     private _context: any = null;
 
     public constructor(_context?: any) {
-        this.setContext(context);
+        this.setContext(_context);
     }
 
     public get extractors(): Extractor[] {
