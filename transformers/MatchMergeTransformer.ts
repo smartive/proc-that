@@ -9,7 +9,7 @@ export abstract class MatchMergeTransformer implements GeneralTransformer {
 
     public process(observable: Observable<any>, context?: any): Observable<any> {
         const matchMerge = (merged: any[], o2: any) => {
-            return this.matchMerge(merged, o2, context)
+            return this.matchMerge(merged, o2, context);
         }
         return observable.reduce(matchMerge, []).flatMap((merged) => {
             return Observable.from(merged);

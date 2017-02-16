@@ -79,8 +79,8 @@ describe('Etl', () => {
                 dummyTransformer.process.should.be.calledWith(o, context);
                 dummyLoader.write.should.be.calledWith(o, context);
                 done();
-            })
-    })
+            });
+    });
 
     it('should process simple object', done => {
         etl
