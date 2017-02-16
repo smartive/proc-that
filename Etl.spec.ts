@@ -7,6 +7,7 @@ import {Etl, EtlState} from './Etl';
 import {Extractor} from './interfaces/Extractor';
 import {JsonExtractor} from './extractors/JsonExtractor';
 import {Loader} from './interfaces/Loader';
+import {Transformer} from './interfaces/Transformer';
 import {Observable} from 'rxjs';
 
 let should = chai.should();
@@ -19,16 +20,31 @@ describe('Etl', () => {
     let extractor: Extractor = new JsonExtractor('./.testdata/json-extractor.object.json');
     let arrayExtractor: Extractor = new JsonExtractor('./.testdata/json-extractor.array.json');
     let matchMergeExtractor: Extractor = new JsonExtractor('./.testdata/match-merge.json');
-    let loader: Loader;
-    let stub: any;
+    let o;
+    let dummyExtractor: Extractor;
+    let dummyTransformer: Transformer;
+    let dummyLoader: Loader;
 
     beforeEach(() => {
         etl = new Etl();
-        loader = {
+
+        o = {_id: "001"};
+
+        dummyExtractor = {
+            read: () => Observable.of(o)
+        };
+        sinon.spy(dummyExtractor, 'read');
+
+        dummyTransformer = {
+            process: o => Observable.of(o)
+        };
+        sinon.spy(dummyTransformer, 'process');
+
+        dummyLoader = {
             write: o => Observable.of(o)
         };
+        sinon.spy(dummyLoader, 'write');
 
-        stub = sinon.stub(loader, 'write', o => Observable.of(o));
     });
 
     it('should initialize with correct default params', () => {
@@ -50,14 +66,46 @@ describe('Etl', () => {
         etl.extractors.should.be.empty;
     });
 
+    it('should pass context down the pipeline', done => {
+        const context = 1;
+        etl = new Etl(context);
+        etl
+            .addExtractor(dummyExtractor)
+            .addTransformer(dummyTransformer)
+            .addLoader(dummyLoader)
+            .start()
+            .subscribe(null, null, () => {
+                dummyExtractor.read.should.be.calledWith(context);
+                dummyTransformer.process.should.be.calledWith(o, context);
+                dummyLoader.write.should.be.calledWith(o, context);
+                done();
+            });
+    });
+
+    it('should pass newly set context down the pipeline', done => {
+        const context = 1;
+        etl
+            .addExtractor(dummyExtractor)
+            .addTransformer(dummyTransformer)
+            .addLoader(dummyLoader)
+            .setContext(context)
+            .start()
+            .subscribe(null, null, () => {
+                dummyExtractor.read.should.be.calledWith(context);
+                dummyTransformer.process.should.be.calledWith(o, context);
+                dummyLoader.write.should.be.calledWith(o, context);
+                done();
+            });
+    });
+
     it('should process simple object', done => {
         etl
             .addExtractor(extractor)
-            .addLoader(loader)
+            .addLoader(dummyLoader)
             .start()
             .subscribe(null, null, () => {
-                loader.write.should.be.calledOnce;
-                loader.write.should.be.calledWithExactly({ foo: 'bar', hello: 'world' });
+                dummyLoader.write.should.be.calledOnce;
+                dummyLoader.write.should.be.calledWith({ foo: 'bar', hello: 'world' });
                 done();
             });
     });
@@ -65,11 +113,11 @@ describe('Etl', () => {
     it('should process simple array', done => {
         etl
             .addExtractor(arrayExtractor)
-            .addLoader(loader)
+            .addLoader(dummyLoader)
             .start()
             .subscribe(null, null, () => {
-                loader.write.should.be.calledThrice;
-                let spy: any = loader.write;
+                dummyLoader.write.should.be.calledThrice;
+                let spy: any = dummyLoader.write;
                 spy.firstCall.should.be.calledWith({ objId: 1, name: 'foobar' });
                 spy.secondCall.should.be.calledWith({ objId: 2, name: 'hello world' });
                 spy.thirdCall.should.be.calledWith({ objId: 3, name: 'third test' });
@@ -82,7 +130,7 @@ describe('Etl', () => {
             .addExtractor({
                 read: () => Observable.throw(new Error('test'))
             })
-            .addLoader(loader)
+            .addLoader(dummyLoader)
             .start()
             .subscribe(null, () => {
                 done();
@@ -108,7 +156,7 @@ describe('Etl', () => {
     it('should call error on transformer error', done => {
         etl
             .addExtractor(extractor)
-            .addLoader(loader)
+            .addLoader(dummyLoader)
             .addTransformer({
                 process: o => Observable.throw(new Error('test'))
             })
@@ -124,7 +172,7 @@ describe('Etl', () => {
         let spy = sinon.spy();
         etl
             .addExtractor(extractor)
-            .addLoader(loader)
+            .addLoader(dummyLoader)
             .addTransformer({
                 process: o => Observable.of(o)
             })
@@ -141,7 +189,7 @@ describe('Etl', () => {
         let spy = sinon.spy();
         etl
             .addExtractor(arrayExtractor)
-            .addLoader(loader)
+            .addLoader(dummyLoader)
             .addTransformer({
                 process: o => Observable.from([o, o])
             })
@@ -158,7 +206,7 @@ describe('Etl', () => {
         let spy = sinon.spy();
         etl
             .addExtractor(arrayExtractor)
-            .addLoader(loader)
+            .addLoader(dummyLoader)
             .addGeneralTransformer({
                 process: o => o.reduce((x, y) => x + y.objId, 0)
             })
@@ -190,7 +238,7 @@ describe('Etl', () => {
 
         etl
             .addExtractor(matchMergeExtractor)
-            .addLoader(loader)
+            .addLoader(dummyLoader)
             .addGeneralTransformer(new TestMatchTransformer)
             .start()
             .subscribe(spy, () => {
@@ -208,6 +256,5 @@ describe('Etl', () => {
                 done();
             });
     });
-
 
 });
