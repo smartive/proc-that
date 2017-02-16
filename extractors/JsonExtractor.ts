@@ -12,7 +12,7 @@ export class JsonExtractor implements Extractor {
         this.filePath = path.resolve(process.cwd(), filePath);
     }
 
-    public read(): Observable<any> {
+    public read(context?: any): Observable<any> {
         try {
             let content = require(this.filePath);
             if (!(content instanceof Array) && content.constructor !== Array) {

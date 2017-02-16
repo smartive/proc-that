@@ -24,6 +24,8 @@ export class Etl {
     private _loaders: Loader[] = [];
     private _state: EtlState = EtlState.Stopped;
 
+    public constructor(private _context?: any) {}
+
     public get extractors(): Extractor[] {
         return this._extractors;
     }
@@ -42,6 +44,15 @@ export class Etl {
 
     public get state(): EtlState {
         return this._state;
+    }
+
+    public setContext(context: any) {
+        if (this._state !== EtlState.Stopped) {
+            this._state = EtlState.Error;
+            throw new Error('Tried to set context on invalid state.');
+        }
+        this._context = context;
+        return this;
     }
 
     public addExtractor(extract: Extractor): Etl {
@@ -78,10 +89,10 @@ export class Etl {
         this._state = EtlState.Running;
 
         let observable = Observable
-            .merge(...this._extractors.map(extractor => extractor.read()));
+            .merge(...this._extractors.map(extractor => extractor.read(this._context)));
 
-        return this._generalTransformers.reduce((observable, transformer) => transformer.process(observable), observable)
-            .flatMap(object => Observable.merge(...this._loaders.map(loader => loader.write(object))))
+        return this._generalTransformers.reduce((observable, transformer) => transformer.process(observable, this._context), observable)
+            .flatMap(object => Observable.merge(...this._loaders.map(loader => loader.write(object, this._context))))
             .do(null, err => {
                 this._state = EtlState.Error;
                 return Observable.throw(err);
@@ -98,5 +109,6 @@ export class Etl {
         this._transformers = [];
         this._loaders = [];
         this._state = EtlState.Stopped;
+        this._context = null;
     }
 }
