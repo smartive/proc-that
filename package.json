@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "clean": "rimraf build",
-    "bootstrap": "npm install && typings install",
+    "bootstrap": "npm install",
     "pretest": "npm run clean && tsc",
     "test": "mocha --ui bdd --recursive ./build",
     "precitest": "npm run bootstrap && npm run clean && tsc",
@@ -18,7 +18,7 @@
     "typescript"
   ],
   "engines": {
-    "node": ">=4.2"
+    "node": ">=6"
   },
   "repository": {
     "type": "git",
@@ -28,20 +28,24 @@
   "author": "Christoph Bühler <christoph.buehler@bluewin.ch>",
   "license": "MIT",
   "devDependencies": {
-    "chai": "^3.5.0",
-    "chai-as-promised": "^5.3.0",
-    "del-cli": "^0.2.0",
+    "@types/chai": "^4.0.1",
+    "@types/mocha": "^2.2.41",
+    "@types/node": "^8.0.16",
+    "@types/sinon": "^2.3.3",
+    "@types/sinon-chai": "^2.7.28",
+    "chai": "^4.1.0",
+    "chai-as-promised": "^7.1.1",
+    "del-cli": "^1.1.0",
     "istanbul": "^0.4.4",
-    "mocha": "^2.5.3",
+    "mocha": "^3.4.1",
     "mocha-lcov-reporter": "^1.2.0",
     "rimraf": "^2.5.2",
-    "sinon": "^1.17.4",
+    "sinon": "^2.4.0",
     "sinon-chai": "^2.8.0",
-    "tslint": "^3.13.0",
-    "typescript": "^1.8.10",
-    "typings": "^1.3.1"
+    "tslint": "^5.5.0",
+    "typescript": "^2.4.2"
   },
   "dependencies": {
-    "rxjs": "5.0.0-beta.10"
+    "rxjs": "^5.4.2"
   }
 }
