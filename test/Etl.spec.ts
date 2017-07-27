@@ -1,25 +1,14 @@
-import { MatchMergeTransformer } from './transformers/MatchMergeTransformer';
-import chai = require('chai');
-import asPromised = require('chai-as-promised');
-import sinon = require('sinon');
-import sinonChai = require('sinon-chai');
-import {Etl, EtlState} from './Etl';
-import {Extractor} from './interfaces/Extractor';
-import {JsonExtractor} from './extractors/JsonExtractor';
-import {Loader} from './interfaces/Loader';
-import {Transformer} from './interfaces/Transformer';
-import {Observable} from 'rxjs';
+import { Observable } from 'rxjs';
 
-let should = chai.should();
-chai.use(asPromised);
-chai.use(sinonChai);
+import { Etl, EtlState, Extractor, JsonExtractor, Loader, Transformer } from '../src';
+import { MatchMergeTransformer } from '../src/transformers/MatchMergeTransformer';
 
 describe('Etl', () => {
 
     let etl: Etl;
-    let extractor: Extractor = new JsonExtractor('./.testdata/json-extractor.object.json');
-    let arrayExtractor: Extractor = new JsonExtractor('./.testdata/json-extractor.array.json');
-    let matchMergeExtractor: Extractor = new JsonExtractor('./.testdata/match-merge.json');
+    let extractor: Extractor = new JsonExtractor('./test/.testdata/json-extractor.object.json');
+    let arrayExtractor: Extractor = new JsonExtractor('./test/.testdata/json-extractor.array.json');
+    let matchMergeExtractor: Extractor = new JsonExtractor('./test/.testdata/match-merge.json');
     let o;
     let dummyExtractor: Extractor;
     let dummyTransformer: Transformer;
@@ -31,27 +20,27 @@ describe('Etl', () => {
         o = {_id: "001"};
 
         dummyExtractor = {
-            read: () => Observable.of(o)
+            read: () => Observable.of(o),
         };
-        sinon.spy(dummyExtractor, 'read');
+        dummyExtractor.read = jest.fn(dummyExtractor.read);
 
         dummyTransformer = {
-            process: o => Observable.of(o)
+            process: o => Observable.of(o),
         };
-        sinon.spy(dummyTransformer, 'process');
+        dummyTransformer.process = jest.fn(dummyTransformer.process);
 
         dummyLoader = {
-            write: o => Observable.of(o)
+            write: o => Observable.of(o),
         };
-        sinon.spy(dummyLoader, 'write');
+        dummyLoader.write = jest.fn(dummyLoader.write);
 
     });
 
     it('should initialize with correct default params', () => {
-        etl.state.should.equal(EtlState.Stopped);
-        etl.extractors.should.be.an('Array').with.is.empty;
-        etl.transformers.should.be.an('Array').with.is.empty;
-        etl.loaders.should.be.an('Array').with.is.empty;
+        expect(etl.state).toBe(EtlState.Stopped);
+        expect(etl.extractors.length).toBe(0);
+        expect(etl.transformers.length).toBe(0);
+        expect(etl.loaders.length).toBe(0);
     });
 
     it('should reset correctly', () => {
@@ -61,9 +50,9 @@ describe('Etl', () => {
             }
         });
 
-        etl.extractors.should.not.be.empty;
+        expect(etl.extractors.length).toBe(1);
         etl.reset();
-        etl.extractors.should.be.empty;
+        expect(etl.extractors.length).toBe(0);
     });
 
     it('should pass context down the pipeline', done => {
@@ -75,9 +64,9 @@ describe('Etl', () => {
             .addLoader(dummyLoader)
             .start()
             .subscribe(null, null, () => {
-                dummyExtractor.read.should.be.calledWith(context);
-                dummyTransformer.process.should.be.calledWith(o, context);
-                dummyLoader.write.should.be.calledWith(o, context);
+                expect((dummyExtractor.read as any).mock.calls[0]).toContain(context);
+                expect((dummyTransformer.process as any).mock.calls[0]).toContain(context);
+                expect((dummyLoader.write as any).mock.calls[0]).toContain(context);
                 done();
             });
     });
@@ -91,9 +80,9 @@ describe('Etl', () => {
             .setContext(context)
             .start()
             .subscribe(null, null, () => {
-                dummyExtractor.read.should.be.calledWith(context);
-                dummyTransformer.process.should.be.calledWith(o, context);
-                dummyLoader.write.should.be.calledWith(o, context);
+                expect((dummyExtractor.read as any).mock.calls[0]).toContain(context);
+                expect((dummyTransformer.process as any).mock.calls[0]).toContain(context);
+                expect((dummyLoader.write as any).mock.calls[0]).toContain(context);
                 done();
             });
     });
@@ -104,8 +93,7 @@ describe('Etl', () => {
             .addLoader(dummyLoader)
             .start()
             .subscribe(null, null, () => {
-                dummyLoader.write.should.be.calledOnce;
-                dummyLoader.write.should.be.calledWith({ foo: 'bar', hello: 'world' });
+                expect((dummyLoader.write as any).mock.calls[0][0]).toMatchObject({ foo: 'bar', hello: 'world' });
                 done();
             });
     });
@@ -116,11 +104,9 @@ describe('Etl', () => {
             .addLoader(dummyLoader)
             .start()
             .subscribe(null, null, () => {
-                dummyLoader.write.should.be.calledThrice;
-                let spy: any = dummyLoader.write;
-                spy.firstCall.should.be.calledWith({ objId: 1, name: 'foobar' });
-                spy.secondCall.should.be.calledWith({ objId: 2, name: 'hello world' });
-                spy.thirdCall.should.be.calledWith({ objId: 3, name: 'third test' });
+                expect((dummyLoader.write as any).mock.calls[0][0]).toMatchObject({ objId: 1, name: 'foobar' });
+                expect((dummyLoader.write as any).mock.calls[1][0]).toMatchObject({ objId: 2, name: 'hello world' });
+                expect((dummyLoader.write as any).mock.calls[2][0]).toMatchObject({ objId: 3, name: 'third test' });
                 done();
             });
     });
@@ -169,7 +155,7 @@ describe('Etl', () => {
     });
 
     it('should process simple object with transformer', done => {
-        let spy = sinon.spy();
+        let spy = jest.fn();
         etl
             .addExtractor(extractor)
             .addLoader(dummyLoader)
@@ -180,13 +166,13 @@ describe('Etl', () => {
             .subscribe(spy, () => {
                 done(new Error('did throw'));
             }, () => {
-                spy.should.be.calledOnce;
+                expect(spy.mock.calls.length).toBe(1);
                 done();
             });
     });
 
     it('should process simple array with transformer (flat)', done => {
-        let spy = sinon.spy();
+        let spy = jest.fn();
         etl
             .addExtractor(arrayExtractor)
             .addLoader(dummyLoader)
@@ -197,13 +183,13 @@ describe('Etl', () => {
             .subscribe(spy, () => {
                 done(new Error('did throw'));
             }, () => {
-                spy.should.have.callCount(6);
+                expect(spy.mock.calls.length).toBe(6);
                 done();
             });
     });
 
     it('should process a general transformer', done => {
-        let spy = sinon.spy();
+        let spy = jest.fn();
         etl
             .addExtractor(arrayExtractor)
             .addLoader(dummyLoader)
@@ -214,14 +200,14 @@ describe('Etl', () => {
             .subscribe(spy, () => {
                 done(new Error('did throw'));
             }, () => {
-                spy.should.be.calledOnce;
-                spy.should.be.calledWith(6);
+                expect(spy.mock.calls.length).toBe(1);
+                expect(spy.mock.calls[0][0]).toBe(6);
                 done();
             });
     });
 
     it('should process a match-merge transformer', done => {
-        let spy = sinon.spy();
+        let spy = jest.fn();
 
         class TestMatchTransformer extends MatchMergeTransformer {
             match(o1, o2) {
@@ -244,12 +230,12 @@ describe('Etl', () => {
             .subscribe(spy, () => {
                 done(new Error('did throw'));
             }, () => {
-                spy.should.be.calledTwice;
-                spy.firstCall.should.be.calledWith({
+                expect(spy.mock.calls.length).toBe(2);
+                expect(spy.mock.calls[0][0]).toMatchObject({
                     location: "A",
                     things: ["a", "c"]
                 });
-                spy.secondCall.should.be.calledWith({
+                expect(spy.mock.calls[1][0]).toMatchObject({
                     location: "B",
                     things: ["b", "d"]
                 });
