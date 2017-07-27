@@ -1,16 +1,16 @@
 {
   "name": "proc-that",
-  "version": "0.6.1",
+  "version": "0.0.0-development",
   "description": "proc(ess)-that - easy extendable etl tool for nodejs written in typesript",
   "main": "index.js",
   "scripts": {
-    "clean": "rimraf build",
-    "bootstrap": "npm install && typings install",
-    "pretest": "npm run clean && tsc",
-    "test": "mocha --ui bdd --recursive ./build",
-    "precitest": "npm run bootstrap && npm run clean && tsc",
-    "citest": "istanbul cover -x \"**/*.spec.*\" _mocha --report lcovonly -- --ui bdd --recursive ./build",
-    "develop": "npm run clean && tsc --sourceMap -w --pretty"
+    "clean": "del-cli ./build ./coverage",
+    "build": "npm run clean && tsc -p ./config/tsconfig.build.json",
+    "develop": "npm run clean && tsc -p .",
+    "lint": "tslint -c ./tslint.json -p ./config/tsconfig.build.json",
+    "test": "npm run lint && npm run clean && jest -c ./jest.json",
+    "test:watch": "npm run clean && jest -c ./jest.json --watch",
+    "semantic-release": "semantic-release pre && npm publish && semantic-release post"
   },
   "keywords": [
     "etl",
@@ -18,30 +18,29 @@
     "typescript"
   ],
   "engines": {
-    "node": ">=4.2"
+    "node": ">=6"
   },
   "repository": {
     "type": "git",
-    "url": "git@github.com:buehler/proc-that.git"
+    "url": "https://github.com/smartive/proc-that.git"
   },
-  "bugs": "https://github.com/buehler/proc-that/issues",
+  "bugs": "https://github.com/smartive/proc-that/issues",
   "author": "Christoph Bühler <christoph.buehler@bluewin.ch>",
   "license": "MIT",
   "devDependencies": {
-    "chai": "^3.5.0",
-    "chai-as-promised": "^5.3.0",
-    "del-cli": "^0.2.0",
-    "istanbul": "^0.4.4",
-    "mocha": "^2.5.3",
-    "mocha-lcov-reporter": "^1.2.0",
-    "rimraf": "^2.5.2",
-    "sinon": "^1.17.4",
-    "sinon-chai": "^2.8.0",
-    "tslint": "^3.13.0",
-    "typescript": "^1.8.10",
-    "typings": "^1.3.1"
+    "@types/jest": "^20.0.5",
+    "del-cli": "^1.1.0",
+    "jest": "^20.0.4",
+    "ts-jest": "^20.0.7",
+    "tslint": "^5.5.0",
+    "tslint-config-airbnb": "^5.2.1",
+    "tsutils": "^2.8.0",
+    "typescript": "^2.4.2",
+    "semantic-release": "^6.3.6"
   },
   "dependencies": {
-    "rxjs": "5.0.0-beta.10"
+    "@types/node": "^8.0.17",
+    "rxjs": "^5.4.2",
+    "tslib": "^1.7.1"
   }
 }
