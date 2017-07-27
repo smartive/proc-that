@@ -1,6 +1,5 @@
 # proc-that
 
-[![Greenkeeper badge](https://badges.greenkeeper.io/smartive/proc-that.svg)](https://greenkeeper.io/)
 proc(ess)-that - easy extendable etl tool for nodejs written in typescript.
 
 Basically instantiate the `Etl` class and add extractors (which pull data from a datasource), transformers (which process the extracted data) and loaders (they load the results into a sink).
@@ -11,7 +10,11 @@ The package is written in `typescript` but can be used in plain javascript as we
 
 ##### A bunch of badges
 
-[![Build Status](https://travis-ci.org/smartive/proc-that.svg?maxAge=3600)](https://travis-ci.org/smartive/proc-that) [![npm](https://img.shields.io/npm/v/proc-that.svg?maxAge=3600)](https://www.npmjs.com/package/proc-that) [![Coverage status](https://img.shields.io/coveralls/smartive/proc-that.svg?maxAge=3600)](https://coveralls.io/github/smartive/proc-that) [![license](https://img.shields.io/github/license/smartive/proc-that.svg?maxAge=2592000)](https://github.com/smartive/proc-that)
+[![Build Status](https://travis-ci.org/smartive/proc-that.svg?maxAge=3600)](https://travis-ci.org/smartive/proc-that)
+[![npm](https://img.shields.io/npm/v/proc-that.svg?maxAge=3600)](https://www.npmjs.com/package/proc-that)
+[![Coverage status](https://img.shields.io/coveralls/smartive/proc-that.svg?maxAge=3600)](https://coveralls.io/github/smartive/proc-that)
+[![license](https://img.shields.io/github/license/smartive/proc-that.svg?maxAge=2592000)](https://github.com/smartive/proc-that)
+[![Greenkeeper badge](https://badges.greenkeeper.io/smartive/proc-that.svg)](https://greenkeeper.io/)
 
 ## Usage
 
