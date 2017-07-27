@@ -1,4 +1,6 @@
 # proc-that
+
+[![Greenkeeper badge](https://badges.greenkeeper.io/smartive/proc-that.svg)](https://greenkeeper.io/)
 proc(ess)-that - easy extendable etl tool for nodejs written in typescript.
 
 Basically instantiate the `Etl` class and add extractors (which pull data from a datasource), transformers (which process the extracted data) and loaders (they load the results into a sink).
