@@ -1,7 +1,7 @@
 language: node_js
 node_js:
-- '5'
-- '4.2'
+- '8'
+- '6'
 
 script: npm run citest
 after_script: "npm install coveralls@^2.11.9 && cat ./coverage/lcov.info | coveralls"
