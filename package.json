@@ -1,6 +1,6 @@
 {
   "name": "proc-that",
-  "version": "0.6.1",
+  "version": "0.0.0-development",
   "description": "proc(ess)-that - easy extendable etl tool for nodejs written in typesript",
   "main": "index.js",
   "scripts": {
@@ -9,7 +9,8 @@
     "develop": "npm run clean && tsc -p .",
     "lint": "tslint -c ./tslint.json -p ./config/tsconfig.build.json",
     "test": "npm run lint && npm run clean && jest -c ./jest.json",
-    "test:watch": "npm run clean && jest -c ./jest.json --watch"
+    "test:watch": "npm run clean && jest -c ./jest.json --watch",
+    "semantic-release": "semantic-release pre && npm publish && semantic-release post"
   },
   "keywords": [
     "etl",
@@ -21,9 +22,9 @@
   },
   "repository": {
     "type": "git",
-    "url": "git@github.com:buehler/proc-that.git"
+    "url": "https://github.com/smartive/proc-that.git"
   },
-  "bugs": "https://github.com/buehler/proc-that/issues",
+  "bugs": "https://github.com/smartive/proc-that/issues",
   "author": "Christoph Bühler <christoph.buehler@bluewin.ch>",
   "license": "MIT",
   "devDependencies": {
@@ -34,7 +35,8 @@
     "tslint": "^5.5.0",
     "tslint-config-airbnb": "^5.2.1",
     "tsutils": "^2.8.0",
-    "typescript": "^2.4.2"
+    "typescript": "^2.4.2",
+    "semantic-release": "^6.3.6"
   },
   "dependencies": {
     "@types/node": "^8.0.17",

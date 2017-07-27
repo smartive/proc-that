@@ -1,18 +1,25 @@
 language: node_js
+
+cache:
+  directories:
+    - node_modules
+
+notifications:
+  email: false
+
 node_js:
-- '8'
-- '6'
+  - '8'
+  - '6'
 
-after_script: "npm install coveralls@^2.11.9 && cat ./coverage/lcov.info | coveralls"
+before_script:
+  - npm prune
 
-before_deploy:
+after_success:
+  - npm install coveralls@^2.11.9 && cat ./coverage/lcov.info | coveralls
+  - npm i
   - npm run build
+  - npm run semantic-release
 
-deploy:
-  provider: npm
-  email: christoph.buehler@bluewin.ch
-  api_key:
-    secure: n3BwWneL6rVwcxNI6tGj8nbs3khJGK7QL331rbiMJtwt2Kqo1qjJ33xbrDEs78lsiqKrJr/9nMTo5dtOyp2YV4fB+x1h9Tufo14Ij1vnJB7lDq+m088pLXJHhKjyJXOKdAqjqqXp+D797uH/yGyk4KiGAgflNchwfjB4Io0x4vFNrcxeZXPZm3rkiarVqXcVNgSC3DTFI1Jqjt5qxlk135pdn9Ep8JreZozL/wKG4V99HCN1vdC9pqvm26PJQRoBr8ZKY6Pob6ViThswT4259N4Va2YLa204wzo8aCOAFz1WfWlkerortPEEAXKLueBCMTicxMQxl8saZupjDqDBJrTRwAh/KzcgQGu+upU3AvrhUGJbubJHNmJTBD5jq0MUzRYUfCkWEcikwbxptpjO2KvVt9SuQLF8NkAK+LbJulk09cvr+fQrutJZvhtogXp06gvrvsEZmAeHJsBl7wW/ASW+Q6fUI6KVX2LVoxa+cxlqFs13KOvwHzi6wgpTczKrs8bN1kQsZIkrgluxnNCYTXDYX34kiBE5kh7sKCJgFHapH7Im/pFwZrJeQz46LZaM/+5SW0jVEbfI/bfZgn0bpzXx2OB8YtidU67jXijwxutN6xolqKDV9r91Is/LzMwYdxnMHCK/91GOGdCScwPBzi9exr36rgt9fu3m5gzkZPA=
-  on:
-    tags: true
-    repo: smartive/proc-that
+branches:
+  except:
+    - /^v\d+\.\d+\.\d+$/
