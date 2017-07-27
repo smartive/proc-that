@@ -3,12 +3,10 @@ node_js:
 - '8'
 - '6'
 
-script: npm run citest
 after_script: "npm install coveralls@^2.11.9 && cat ./coverage/lcov.info | coveralls"
 
 before_deploy:
-  - npm run bootstrap
-  - tsc --outDir .
+  - npm run build
 
 deploy:
   provider: npm

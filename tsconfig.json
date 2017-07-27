@@ -1,15 +1,7 @@
 {
-  "compilerOptions": {
-    "target": "es6",
-    "module": "commonjs",
-    "moduleResolution": "node",
-    "removeComments": false,
-    "outDir": "./build",
-    "declaration": true,
-    "sourceMap": false
-  },
-  "exclude": [
-    "node_modules",
-    "build"
-  ]
+    "extends": "./config/tsconfig.base.json",
+    "compilerOptions": {
+        "watch": true,
+        "sourceMap": true
+    }
 }
