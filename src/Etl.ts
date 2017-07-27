@@ -1,14 +1,15 @@
-import {Extractor} from './interfaces/Extractor';
-import {GeneralTransformer} from './interfaces/GeneralTransformer';
-import {Transformer} from './interfaces/Transformer';
-import {MapTransformer} from './transformers/MapTransformer';
-import {Loader} from './interfaces/Loader';
-import {Observable} from 'rxjs';
+import { Observable } from 'rxjs';
+
+import { Extractor } from './interfaces/Extractor';
+import { GeneralTransformer } from './interfaces/GeneralTransformer';
+import { Loader } from './interfaces/Loader';
+import { Transformer } from './interfaces/Transformer';
+import { MapTransformer } from './transformers/MapTransformer';
 
 export enum EtlState {
     Running,
     Stopped,
-    Error
+    Error,
 }
 
 /**
@@ -49,7 +50,7 @@ export class Etl {
         return this._state;
     }
 
-    public setContext(context: any) {
+    public setContext(context: any): this {
         if (this._state !== EtlState.Stopped) {
             this._state = EtlState.Error;
             throw new Error('Tried to set context on invalid state.');
@@ -91,17 +92,22 @@ export class Etl {
     public start(): Observable<any> {
         this._state = EtlState.Running;
 
-        let observable = Observable
+        const observable = Observable
             .merge(...this._extractors.map(extractor => extractor.read(this._context)));
 
-        return this._generalTransformers.reduce((observable, transformer) => transformer.process(observable, this._context), observable)
+        return this._generalTransformers
+            .reduce((observable, transformer) => transformer.process(observable, this._context), observable)
             .flatMap(object => Observable.merge(...this._loaders.map(loader => loader.write(object, this._context))))
-            .do(null, err => {
+            .do(
+            () => { },
+            (err) => {
                 this._state = EtlState.Error;
                 return Observable.throw(err);
-            }, () => {
+            },
+            () => {
                 this._state = EtlState.Stopped;
-            });
+            },
+        );
     }
 
     /**

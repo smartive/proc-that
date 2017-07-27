@@ -1,7 +1,6 @@
 import { Observable } from 'rxjs';
 
-import { Etl, EtlState, Extractor, JsonExtractor, Loader, Transformer } from '../src';
-import { MatchMergeTransformer } from '../src/transformers/MatchMergeTransformer';
+import { Etl, EtlState, Extractor, JsonExtractor, Loader, MatchMergeTransformer, Transformer } from '../src';
 
 describe('Etl', () => {
 
