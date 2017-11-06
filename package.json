@@ -10,7 +10,7 @@
     "lint": "tslint -c ./tslint.json -p ./config/tsconfig.build.json",
     "test": "npm run lint && npm run clean && jest -c ./jest.json",
     "test:watch": "npm run clean && jest -c ./jest.json --watch",
-    "semantic-release": "semantic-release pre && npm publish && semantic-release post"
+    "semantic-release": "semantic-release"
   },
   "keywords": [
     "etl",
@@ -28,19 +28,19 @@
   "author": "Christoph Bühler <christoph.buehler@bluewin.ch>",
   "license": "MIT",
   "devDependencies": {
-    "@types/jest": "^21.1.0",
+    "@types/jest": "^21.1.5",
     "del-cli": "^1.1.0",
-    "jest": "^21.0.0",
-    "ts-jest": "^21.0.0",
-    "tslint": "^5.5.0",
-    "tslint-config-airbnb": "^5.2.1",
-    "tsutils": "^2.8.0",
-    "typescript": "^2.4.2",
-    "semantic-release": "^8.0.0"
+    "jest": "^21.2.1",
+    "ts-jest": "^21.1.4",
+    "tslint": "^5.8.0",
+    "tslint-config-airbnb": "^5.3.0",
+    "tsutils": "^2.12.2",
+    "typescript": "^2.6.1",
+    "semantic-release": "^9.0.0"
   },
   "dependencies": {
-    "@types/node": "^8.0.17",
-    "rxjs": "^5.4.2",
-    "tslib": "^1.7.1"
+    "@types/node": "^8.0.47",
+    "rxjs": "^5.5.2",
+    "tslib": "^1.8.0"
   }
 }
