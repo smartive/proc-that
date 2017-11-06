@@ -1,3 +1,5 @@
+import { join } from 'path';
+
 import { JsonExtractor } from '../src';
 
 describe('JsonExtractor', () => {
@@ -10,7 +12,7 @@ describe('JsonExtractor', () => {
     it('should get correct path', () => {
         const ext = new JsonExtractor('hello');
         const anyExt: any = ext;
-        const result = process.cwd() + '/hello';
+        const result = join(process.cwd(), 'hello');
         expect(anyExt.filePath).toBe(result);
     });
 
@@ -18,8 +20,8 @@ describe('JsonExtractor', () => {
         const ext = new JsonExtractor('./test/.testdata/json-extractor.object.json');
         ext.read().subscribe((obj) => {
             expect(obj).toMatchObject({
-                "foo": "bar",
-                "hello": "world"
+                foo: 'bar',
+                hello: 'world',
             });
             done();
         });
@@ -36,11 +38,14 @@ describe('JsonExtractor', () => {
 
     it('should throw on not found file', (done) => {
         const ext = new JsonExtractor('404.json');
-        ext.read().subscribe(() => {
-            done(new Error('did not throw'));
-        }, () => {
-            done();
-        });
+        ext.read().subscribe(
+            () => {
+                done(new Error('did not throw'));
+            },
+            () => {
+                done();
+            },
+        );
     });
 
 });
