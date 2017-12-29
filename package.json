@@ -30,7 +30,7 @@
   "author": "Christoph Bühler <christoph.buehler@bluewin.ch>",
   "license": "MIT",
   "devDependencies": {
-    "@types/jest": "^21.1.5",
+    "@types/jest": "^22.0.0",
     "del-cli": "^1.1.0",
     "jest": "^21.2.1",
     "semantic-release": "^9.0.0",
