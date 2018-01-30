@@ -89,11 +89,11 @@ export class Etl {
      *                            during the "next" process step you get update on how many are processed yet.
      *                            Throws when any step produces an error.
      */
-    public start(observable?: Observable<any>): Observable<any> {
+    public start(observable: Observable<any> = Observable.empty()): Observable<any> {
         this._state = EtlState.Running;
 
         const o: Observable<any> = Observable
-            .merge(observable || Observable.empty(), ...this._extractors.map(extractor => extractor.read(this._context)));
+            .merge(observable, ...this._extractors.map(extractor => extractor.read(this._context)));
 
         return this._generalTransformers
             .reduce((observable, transformer) => transformer.process(observable, this._context), o)
