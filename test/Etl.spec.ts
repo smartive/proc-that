@@ -12,13 +12,13 @@ import {
 
 describe("Etl", () => {
   let etl: Etl;
-  let extractor: Extractor = new JsonExtractor(
+  const extractor: Extractor = new JsonExtractor(
     "./test/.testdata/json-extractor.object.json"
   );
-  let arrayExtractor: Extractor = new JsonExtractor(
+  const arrayExtractor: Extractor = new JsonExtractor(
     "./test/.testdata/json-extractor.array.json"
   );
-  let matchMergeExtractor: Extractor = new JsonExtractor(
+  const matchMergeExtractor: Extractor = new JsonExtractor(
     "./test/.testdata/match-merge.json"
   );
   let o;
@@ -167,7 +167,7 @@ describe("Etl", () => {
     etl
       .addExtractor(extractor)
       .addLoader({
-        write: (o) => throwError(() => new Error("test")),
+        write: () => throwError(() => new Error("test")),
       })
       .start()
       .subscribe({
@@ -185,7 +185,7 @@ describe("Etl", () => {
       .addExtractor(extractor)
       .addLoader(dummyLoader)
       .addTransformer({
-        process: (o) => throwError(() => new Error("test")),
+        process: () => throwError(() => new Error("test")),
       })
       .start()
       .subscribe({
@@ -199,7 +199,7 @@ describe("Etl", () => {
   });
 
   it("should process simple object with transformer", (done) => {
-    let spy = jest.fn();
+    const spy = jest.fn();
     etl
       .addExtractor(extractor)
       .addLoader(dummyLoader)
@@ -220,7 +220,7 @@ describe("Etl", () => {
   });
 
   it("should process simple array with transformer (flat)", (done) => {
-    let spy = jest.fn();
+    const spy = jest.fn();
     etl
       .addExtractor(arrayExtractor)
       .addLoader(dummyLoader)
@@ -241,7 +241,7 @@ describe("Etl", () => {
   });
 
   it("should process a general transformer", (done) => {
-    let spy = jest.fn();
+    const spy = jest.fn();
     etl
       .addExtractor(arrayExtractor)
       .addLoader(dummyLoader)
@@ -263,7 +263,7 @@ describe("Etl", () => {
   });
 
   it("should process a match-merge transformer", (done) => {
-    let spy = jest.fn();
+    const spy = jest.fn();
 
     class TestMatchTransformer extends MatchMergeTransformer {
       match(o1, o2) {

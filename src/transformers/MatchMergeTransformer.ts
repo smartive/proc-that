@@ -1,4 +1,4 @@
-import { from, mergeMap, Observable, reduce } from "rxjs";
+import { mergeMap, Observable, reduce } from "rxjs";
 
 import { GeneralTransformer } from "../interfaces/GeneralTransformer";
 
@@ -7,11 +7,7 @@ export abstract class MatchMergeTransformer implements GeneralTransformer {
     const matchMerge = (merged: any[], o2: any) => {
       return this.matchMerge(merged, o2, context);
     };
-    return observable.pipe(reduce(matchMerge, [])).pipe(
-      mergeMap((merged) => {
-        return from(merged);
-      })
-    );
+    return observable.pipe(reduce(matchMerge, [])).pipe(mergeMap((v) => v));
   }
 
   protected abstract match(o1: any, o2: any, context?: any): boolean;
@@ -22,7 +18,6 @@ export abstract class MatchMergeTransformer implements GeneralTransformer {
     for (let i = 0; i < merged.length; i++) {
       if (this.match(merged[i], o2, context)) {
         const o1 = merged.splice(i, 1)[0];
-        // tslint:disable-next-line
         o2 = this.merge(o1, o2, context);
         // Try to merge the merged element with the remaining elements,
         // starting from the current position
