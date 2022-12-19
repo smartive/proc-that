@@ -1,6 +1,6 @@
-import { Observable } from 'rxjs';
+import { Observable, of } from "rxjs";
 
-import { Loader } from '../interfaces/Loader';
+import { Loader } from "../interfaces/Loader";
 
 /**
  * Loader that outputs everything to the console.
@@ -10,8 +10,8 @@ import { Loader } from '../interfaces/Loader';
  * @implements {Loader}
  */
 export class ConsoleLoader implements Loader {
-    public write(object: any): Observable<any> {
-        console.log(object);
-        return Observable.of(object);
-    }
+  public write(object: any): Observable<any> {
+    console.log(object);
+    return of(object);
+  }
 }

@@ -1,28 +1,28 @@
-import { Observable } from 'rxjs/Rx';
+import { Observable } from "rxjs/Rx";
 
-import { MatchMergeTransformer } from '../src/transformers/MatchMergeTransformer';
+import { MatchMergeTransformer } from "../src/transformers/MatchMergeTransformer";
 
-describe('MatchMergeTransformer', () => {
+describe("MatchMergeTransformer", () => {
+  it("should return an observable", () => {
+    const spy = jest.fn();
 
-    it('should return an observable', () => {
-        const spy = jest.fn();
+    class TestMatchMergeTransformer extends MatchMergeTransformer {
+      match(o1, o2) {
+        return o1 === o2;
+      }
 
-        class TestMatchMergeTransformer extends MatchMergeTransformer {
-            match(o1, o2) {
-                return o1 === o2;
-            }
+      merge(o1, o2) {
+        return o1;
+      }
+    }
 
-            merge(o1, o2) {
-                return o1;
-            }
-        }
+    const t = new TestMatchMergeTransformer();
 
-        const t = new TestMatchMergeTransformer();
-
-        t.process(Observable.from([1, 2, 3, 2, 3]))
-            .subscribe(spy, null, () => {
-                expect(spy.mock.calls.length).toBe(3);
-            });
+    t.process(Observable.from([1, 2, 3, 2, 3])).subscribe({
+      next: spy,
+      complete: () => {
+        expect(spy.mock.calls.length).toBe(3);
+      },
     });
-
+  });
 });
