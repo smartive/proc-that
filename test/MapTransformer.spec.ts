@@ -1,9 +1,9 @@
-import { from, of } from "rxjs";
+import { from, of } from 'rxjs';
 
-import { MapTransformer } from "../src";
+import { MapTransformer } from '../src';
 
-describe("MapTransformer", () => {
-  it("should return an observable", () => {
+describe('MapTransformer', () => {
+  it('should return an observable', () => {
     const spy = jest.fn();
 
     const subt = {

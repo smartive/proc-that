@@ -1,39 +1,35 @@
-import { join } from "path";
+import { join } from 'path';
 
-import { JsonExtractor } from "../src";
+import { JsonExtractor } from '../src';
 
-describe("JsonExtractor", () => {
-  it("should return an observable", () => {
-    const ext = new JsonExtractor(
-      "./test/.testdata/json-extractor.object.json"
-    );
+describe('JsonExtractor', () => {
+  it('should return an observable', () => {
+    const ext = new JsonExtractor('./test/.testdata/json-extractor.object.json');
     expect(ext.read()).toBeInstanceOf(Object);
   });
 
-  it("should get correct path", () => {
-    const ext = new JsonExtractor("hello");
+  it('should get correct path', () => {
+    const ext = new JsonExtractor('hello');
     const anyExt: any = ext;
-    const result = join(process.cwd(), "hello");
+    const result = join(process.cwd(), 'hello');
     expect(anyExt.filePath).toBe(result);
   });
 
-  it("should receive a json object", (done) => {
-    const ext = new JsonExtractor(
-      "./test/.testdata/json-extractor.object.json"
-    );
+  it('should receive a json object', (done) => {
+    const ext = new JsonExtractor('./test/.testdata/json-extractor.object.json');
     ext.read().subscribe({
       next: (obj) => {
         expect(obj).toMatchObject({
-          foo: "bar",
-          hello: "world",
+          foo: 'bar',
+          hello: 'world',
         });
         done();
       },
     });
   });
 
-  it("should receive a json array", (done) => {
-    const ext = new JsonExtractor("./test/.testdata/json-extractor.array.json");
+  it('should receive a json array', (done) => {
+    const ext = new JsonExtractor('./test/.testdata/json-extractor.array.json');
     const spy = jest.fn();
     ext.read().subscribe({
       next: spy,
@@ -44,11 +40,11 @@ describe("JsonExtractor", () => {
     });
   });
 
-  it("should throw on not found file", (done) => {
-    const ext = new JsonExtractor("404.json");
+  it('should throw on not found file', (done) => {
+    const ext = new JsonExtractor('404.json');
     ext.read().subscribe({
       next: () => {
-        done(new Error("did not throw"));
+        done(new Error('did not throw'));
       },
       error: () => {
         done();

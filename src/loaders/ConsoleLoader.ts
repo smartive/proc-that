@@ -1,6 +1,6 @@
-import { Observable, of } from "rxjs";
+import { Observable, of } from 'rxjs';
 
-import { Loader } from "../interfaces/Loader";
+import { Loader } from '../interfaces/Loader';
 
 /**
  * Loader that outputs everything to the console.

@@ -1,26 +1,12 @@
-import { from, of, reduce, throwError } from "rxjs";
+import { from, of, reduce, throwError } from 'rxjs';
 
-import {
-  Etl,
-  EtlState,
-  Extractor,
-  JsonExtractor,
-  Loader,
-  MatchMergeTransformer,
-  Transformer,
-} from "../src";
+import { Etl, EtlState, Extractor, JsonExtractor, Loader, MatchMergeTransformer, Transformer } from '../src';
 
-describe("Etl", () => {
+describe('Etl', () => {
   let etl: Etl;
-  const extractor: Extractor = new JsonExtractor(
-    "./test/.testdata/json-extractor.object.json"
-  );
-  const arrayExtractor: Extractor = new JsonExtractor(
-    "./test/.testdata/json-extractor.array.json"
-  );
-  const matchMergeExtractor: Extractor = new JsonExtractor(
-    "./test/.testdata/match-merge.json"
-  );
+  const extractor: Extractor = new JsonExtractor('./test/.testdata/json-extractor.object.json');
+  const arrayExtractor: Extractor = new JsonExtractor('./test/.testdata/json-extractor.array.json');
+  const matchMergeExtractor: Extractor = new JsonExtractor('./test/.testdata/match-merge.json');
   let o;
   let dummyExtractor: Extractor;
   let dummyTransformer: Transformer;
@@ -29,7 +15,7 @@ describe("Etl", () => {
   beforeEach(() => {
     etl = new Etl();
 
-    o = { _id: "001" };
+    o = { _id: '001' };
 
     dummyExtractor = {
       read: () => of(o),
@@ -47,14 +33,14 @@ describe("Etl", () => {
     dummyLoader.write = jest.fn(dummyLoader.write);
   });
 
-  it("should initialize with correct default params", () => {
+  it('should initialize with correct default params', () => {
     expect(etl.state).toBe(EtlState.Stopped);
     expect(etl.extractors.length).toBe(0);
     expect(etl.transformers.length).toBe(0);
     expect(etl.loaders.length).toBe(0);
   });
 
-  it("should reset correctly", () => {
+  it('should reset correctly', () => {
     etl.addExtractor({
       read: function () {
         return of(null);
@@ -66,7 +52,7 @@ describe("Etl", () => {
     expect(etl.extractors.length).toBe(0);
   });
 
-  it("should pass context down the pipeline", (done) => {
+  it('should pass context down the pipeline', (done) => {
     const context = 1;
     etl = new Etl(context);
     etl
@@ -77,16 +63,14 @@ describe("Etl", () => {
       .subscribe({
         complete: () => {
           expect((dummyExtractor.read as any).mock.calls[0]).toContain(context);
-          expect((dummyTransformer.process as any).mock.calls[0]).toContain(
-            context
-          );
+          expect((dummyTransformer.process as any).mock.calls[0]).toContain(context);
           expect((dummyLoader.write as any).mock.calls[0]).toContain(context);
           done();
         },
       });
   });
 
-  it("should pass newly set context down the pipeline", (done) => {
+  it('should pass newly set context down the pipeline', (done) => {
     const context = 1;
     etl
       .addExtractor(dummyExtractor)
@@ -97,16 +81,14 @@ describe("Etl", () => {
       .subscribe({
         complete: () => {
           expect((dummyExtractor.read as any).mock.calls[0]).toContain(context);
-          expect((dummyTransformer.process as any).mock.calls[0]).toContain(
-            context
-          );
+          expect((dummyTransformer.process as any).mock.calls[0]).toContain(context);
           expect((dummyLoader.write as any).mock.calls[0]).toContain(context);
           done();
         },
       });
   });
 
-  it("should process simple object", (done) => {
+  it('should process simple object', (done) => {
     etl
       .addExtractor(extractor)
       .addLoader(dummyLoader)
@@ -115,15 +97,15 @@ describe("Etl", () => {
         complete: () => {
           expect((dummyLoader.write as any).mock.calls).toHaveLength(1);
           expect((dummyLoader.write as any).mock.calls[0][0]).toMatchObject({
-            foo: "bar",
-            hello: "world",
+            foo: 'bar',
+            hello: 'world',
           });
           done();
         },
       });
   });
 
-  it("should process simple array", (done) => {
+  it('should process simple array', (done) => {
     etl
       .addExtractor(arrayExtractor)
       .addLoader(dummyLoader)
@@ -133,25 +115,25 @@ describe("Etl", () => {
           expect((dummyLoader.write as any).mock.calls).toHaveLength(3);
           expect((dummyLoader.write as any).mock.calls[0][0]).toMatchObject({
             objId: 1,
-            name: "foobar",
+            name: 'foobar',
           });
           expect((dummyLoader.write as any).mock.calls[1][0]).toMatchObject({
             objId: 2,
-            name: "hello world",
+            name: 'hello world',
           });
           expect((dummyLoader.write as any).mock.calls[2][0]).toMatchObject({
             objId: 3,
-            name: "third test",
+            name: 'third test',
           });
           done();
         },
       });
   });
 
-  it("should call error on extractor error", (done) => {
+  it('should call error on extractor error', (done) => {
     etl
       .addExtractor({
-        read: () => throwError(() => new Error("test")),
+        read: () => throwError(() => new Error('test')),
       })
       .addLoader(dummyLoader)
       .start()
@@ -160,16 +142,16 @@ describe("Etl", () => {
           done();
         },
         complete: () => {
-          done(new Error("did not throw"));
+          done(new Error('did not throw'));
         },
       });
   });
 
-  it("should call error on loader error", (done) => {
+  it('should call error on loader error', (done) => {
     etl
       .addExtractor(extractor)
       .addLoader({
-        write: () => throwError(() => new Error("test")),
+        write: () => throwError(() => new Error('test')),
       })
       .start()
       .subscribe({
@@ -177,17 +159,17 @@ describe("Etl", () => {
           done();
         },
         complete: () => {
-          done(new Error("did not throw"));
+          done(new Error('did not throw'));
         },
       });
   });
 
-  it("should call error on transformer error", (done) => {
+  it('should call error on transformer error', (done) => {
     etl
       .addExtractor(extractor)
       .addLoader(dummyLoader)
       .addTransformer({
-        process: () => throwError(() => new Error("test")),
+        process: () => throwError(() => new Error('test')),
       })
       .start()
       .subscribe({
@@ -195,12 +177,12 @@ describe("Etl", () => {
           done();
         },
         complete: () => {
-          done(new Error("did not throw"));
+          done(new Error('did not throw'));
         },
       });
   });
 
-  it("should process simple object with transformer", (done) => {
+  it('should process simple object with transformer', (done) => {
     const spy = jest.fn();
     etl
       .addExtractor(extractor)
@@ -212,7 +194,7 @@ describe("Etl", () => {
       .subscribe({
         next: spy,
         error: () => {
-          done(new Error("did throw"));
+          done(new Error('did throw'));
         },
         complete: () => {
           expect(spy.mock.calls.length).toBe(1);
@@ -221,7 +203,7 @@ describe("Etl", () => {
       });
   });
 
-  it("should process simple array with transformer (flat)", (done) => {
+  it('should process simple array with transformer (flat)', (done) => {
     const spy = jest.fn();
     etl
       .addExtractor(arrayExtractor)
@@ -233,7 +215,7 @@ describe("Etl", () => {
       .subscribe({
         next: spy,
         error: () => {
-          done(new Error("did throw"));
+          done(new Error('did throw'));
         },
         complete: () => {
           expect(spy.mock.calls.length).toBe(6);
@@ -242,7 +224,7 @@ describe("Etl", () => {
       });
   });
 
-  it("should process a general transformer", (done) => {
+  it('should process a general transformer', (done) => {
     const spy = jest.fn();
     etl
       .addExtractor(arrayExtractor)
@@ -254,7 +236,7 @@ describe("Etl", () => {
       .subscribe({
         next: spy,
         error: () => {
-          done(new Error("did throw"));
+          done(new Error('did throw'));
         },
         complete: () => {
           expect(spy.mock.calls.length).toBe(1);
@@ -264,7 +246,7 @@ describe("Etl", () => {
       });
   });
 
-  it("should process a match-merge transformer", (done) => {
+  it('should process a match-merge transformer', (done) => {
     const spy = jest.fn();
 
     class TestMatchTransformer extends MatchMergeTransformer {
@@ -288,36 +270,34 @@ describe("Etl", () => {
       .subscribe({
         next: spy,
         error: () => {
-          done(new Error("did throw"));
+          done(new Error('did throw'));
         },
         complete: () => {
           expect(spy.mock.calls.length).toBe(2);
           expect(spy.mock.calls[0][0]).toMatchObject({
-            location: "A",
-            things: ["a", "c"],
+            location: 'A',
+            things: ['a', 'c'],
           });
           expect(spy.mock.calls[1][0]).toMatchObject({
-            location: "B",
-            things: ["b", "d"],
+            location: 'B',
+            things: ['b', 'd'],
           });
           done();
         },
       });
   });
 
-  it("should pipe inital observable", (done) => {
+  it('should pipe inital observable', (done) => {
     const context = 1;
     etl = new Etl(context);
     etl
       .addTransformer(dummyTransformer)
       .addLoader(dummyLoader)
-      .start(of("hi"))
+      .start(of('hi'))
       .subscribe({
         complete: () => {
-          expect((dummyTransformer.process as any).mock.calls[0]).toContain(
-            "hi"
-          );
-          expect((dummyLoader.write as any).mock.calls[0]).toContain("hi");
+          expect((dummyTransformer.process as any).mock.calls[0]).toContain('hi');
+          expect((dummyLoader.write as any).mock.calls[0]).toContain('hi');
           done();
         },
       });

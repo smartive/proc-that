@@ -1,9 +1,9 @@
-import { from } from "rxjs";
+import { from } from 'rxjs';
 
-import { MatchMergeTransformer } from "../src/transformers/MatchMergeTransformer";
+import { MatchMergeTransformer } from '../src/transformers/MatchMergeTransformer';
 
-describe("MatchMergeTransformer", () => {
-  it("should return an observable", () => {
+describe('MatchMergeTransformer', () => {
+  it('should return an observable', () => {
     const spy = jest.fn();
 
     class TestMatchMergeTransformer extends MatchMergeTransformer {

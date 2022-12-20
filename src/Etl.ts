@@ -1,10 +1,10 @@
-import { EMPTY, merge, mergeMap, Observable, tap, throwError } from "rxjs";
+import { EMPTY, merge, mergeMap, Observable, tap, throwError } from 'rxjs';
 
-import { Extractor } from "./interfaces/Extractor";
-import { GeneralTransformer } from "./interfaces/GeneralTransformer";
-import { Loader } from "./interfaces/Loader";
-import { Transformer } from "./interfaces/Transformer";
-import { MapTransformer } from "./transformers/MapTransformer";
+import { Extractor } from './interfaces/Extractor';
+import { GeneralTransformer } from './interfaces/GeneralTransformer';
+import { Loader } from './interfaces/Loader';
+import { Transformer } from './interfaces/Transformer';
+import { MapTransformer } from './transformers/MapTransformer';
 
 export enum EtlState {
   Running,
@@ -53,7 +53,7 @@ export class Etl {
   public setContext(context: any): this {
     if (this._state !== EtlState.Stopped) {
       this._state = EtlState.Error;
-      throw new Error("Tried to set context on invalid state.");
+      throw new Error('Tried to set context on invalid state.');
     }
     this._context = context;
     return this;
@@ -92,26 +92,11 @@ export class Etl {
   public start(observable: Observable<any> = EMPTY): Observable<any> {
     this._state = EtlState.Running;
 
-    const o: Observable<any> = merge(
-      observable,
-      ...this._extractors.map((extractor) => extractor.read(this._context))
-    );
+    const o: Observable<any> = merge(observable, ...this._extractors.map((extractor) => extractor.read(this._context)));
 
     return this._generalTransformers
-      .reduce(
-        (observable, transformer) =>
-          transformer.process(observable, this._context),
-        o
-      )
-      .pipe(
-        mergeMap((object) =>
-          merge(
-            ...this._loaders.map((loader) =>
-              loader.write(object, this._context)
-            )
-          )
-        )
-      )
+      .reduce((observable, transformer) => transformer.process(observable, this._context), o)
+      .pipe(mergeMap((object) => merge(...this._loaders.map((loader) => loader.write(object, this._context)))))
       .pipe(
         tap({
           error: (err) => {

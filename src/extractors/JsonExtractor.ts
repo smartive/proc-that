@@ -1,7 +1,7 @@
-import { resolve } from "path";
-import { from, Observable, throwError } from "rxjs";
+import { resolve } from 'path';
+import { from, Observable, throwError } from 'rxjs';
 
-import { Extractor } from "../interfaces/Extractor";
+import { Extractor } from '../interfaces/Extractor';
 
 /**
  * Extractor that reads a JSON file at a given filepath. The path is resolved relatively to the running tasks root dir.

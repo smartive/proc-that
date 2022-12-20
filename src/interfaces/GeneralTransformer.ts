@@ -1,4 +1,4 @@
-import { Observable } from "rxjs";
+import { Observable } from 'rxjs';
 
 /**
  * GeneralTransformer interface. Provides a "process(observable)" method that processes an observable.

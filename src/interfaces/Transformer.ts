@@ -1,4 +1,4 @@
-import { Observable } from "rxjs";
+import { Observable } from 'rxjs';
 
 /**
  * Transformer interface. Only provides ".process(obj)" that returns an Observable with
