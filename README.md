@@ -6,7 +6,7 @@ Basically instantiate the `Etl` class and add extractors (which pull data from a
 
 A basic, hypothetic example could be: "Load data from a JSON array, snake_case all properties and store those objects into a mongoDB."
 
-The package is written in `typescript` but can be used in plain javascript as well.
+The package is written in `typescript` but can be used in plain javascript as well
 
 ##### A bunch of badges
 
@@ -21,14 +21,14 @@ The package is written in `typescript` but can be used in plain javascript as we
 ## Usage
 
 ```typescript
-import {Etl} from 'proc-that';
+import { Etl } from "proc-that";
 
 new Etl()
-    .addExtractor(/* class that implements Extractor */)
-    .addTransformer(/* class that implements Transformer */)
-    .addLoader(/* class that implements Loader */)
-    .start()
-    .subscribe(progress, error, success);
+  .addExtractor(/* class that implements Extractor */)
+  .addTransformer(/* class that implements Transformer */)
+  .addLoader(/* class that implements Loader */)
+  .start()
+  .subscribe(progress, error, success);
 ```
 
 After all objects are extracted, transformed and loaded, the `.start()` observable completes and the process is finished.
@@ -37,15 +37,15 @@ Below is a list if extractors and loaders that are already implemented. Feel fre
 
 ## Extractors
 
- Name                           | Description                                      | Link
---------------------------------|--------------------------------------------------|-------------------------------------------------------
- `proc-that-rest-extractor`     | Extract objects from GET requests                | https://github.com/smartive/proc-that-rest-extractor
+| Name                       | Description                       | Link                                                 |
+| -------------------------- | --------------------------------- | ---------------------------------------------------- |
+| `proc-that-rest-extractor` | Extract objects from GET requests | https://github.com/smartive/proc-that-rest-extractor |
 
 ## Loaders
 
- Name                           | Description                                      | Link
---------------------------------|--------------------------------------------------|-------------------------------------------------------
- `proc-that-elastic-loader`     | Load transformed objects into elasticsearch      | https://github.com/smartive/proc-that-elastic-loader
+| Name                       | Description                                 | Link                                                 |
+| -------------------------- | ------------------------------------------- | ---------------------------------------------------- |
+| `proc-that-elastic-loader` | Load transformed objects into elasticsearch | https://github.com/smartive/proc-that-elastic-loader |
 
 ## Implement your own
 
