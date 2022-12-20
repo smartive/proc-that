@@ -5,5 +5,5 @@ import { Observable } from 'rxjs';
  * the new result (array will be flattend).
  */
 export interface Transformer {
-    process(object: any, context?: any): Observable<any>;
+  process(object: any, context?: any): Observable<any>;
 }
