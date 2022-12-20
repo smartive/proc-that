@@ -1,4 +1,4 @@
-import { mergeMap, Observable, reduce } from "rxjs";
+import { from, mergeMap, Observable, reduce } from "rxjs";
 
 import { GeneralTransformer } from "../interfaces/GeneralTransformer";
 
@@ -7,7 +7,9 @@ export abstract class MatchMergeTransformer implements GeneralTransformer {
     const matchMerge = (merged: any[], o2: any) => {
       return this.matchMerge(merged, o2, context);
     };
-    return observable.pipe(reduce(matchMerge, [])).pipe(mergeMap((v) => v));
+    return observable
+      .pipe(reduce(matchMerge, []))
+      .pipe(mergeMap((v) => from(v)));
   }
 
   protected abstract match(o1: any, o2: any, context?: any): boolean;

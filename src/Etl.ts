@@ -1,4 +1,4 @@
-import { EMPTY, merge, mergeMap, Observable, throwError } from "rxjs";
+import { EMPTY, merge, mergeMap, Observable, tap, throwError } from "rxjs";
 
 import { Extractor } from "./interfaces/Extractor";
 import { GeneralTransformer } from "./interfaces/GeneralTransformer";
@@ -97,7 +97,7 @@ export class Etl {
       ...this._extractors.map((extractor) => extractor.read(this._context))
     );
 
-    const pipe = this._generalTransformers
+    return this._generalTransformers
       .reduce(
         (observable, transformer) =>
           transformer.process(observable, this._context),
@@ -111,19 +111,18 @@ export class Etl {
             )
           )
         )
+      )
+      .pipe(
+        tap({
+          error: (err) => {
+            this._state = EtlState.Error;
+            return throwError(() => err);
+          },
+          complete: () => {
+            this._state = EtlState.Stopped;
+          },
+        })
       );
-
-    pipe.subscribe({
-      error: (err) => {
-        this._state = EtlState.Error;
-        return throwError(() => err);
-      },
-      complete: () => {
-        this._state = EtlState.Stopped;
-      },
-    });
-
-    return pipe;
   }
 
   /**

@@ -113,6 +113,7 @@ describe("Etl", () => {
       .start()
       .subscribe({
         complete: () => {
+          expect((dummyLoader.write as any).mock.calls).toHaveLength(1);
           expect((dummyLoader.write as any).mock.calls[0][0]).toMatchObject({
             foo: "bar",
             hello: "world",
@@ -129,6 +130,7 @@ describe("Etl", () => {
       .start()
       .subscribe({
         complete: () => {
+          expect((dummyLoader.write as any).mock.calls).toHaveLength(3);
           expect((dummyLoader.write as any).mock.calls[0][0]).toMatchObject({
             objId: 1,
             name: "foobar",
