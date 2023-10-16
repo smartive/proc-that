@@ -33,7 +33,7 @@
   "author": "Christoph Bühler <christoph.buehler@bluewin.ch>",
   "license": "MIT",
   "devDependencies": {
-    "@smartive/eslint-config": "^3.1.1",
+    "@smartive/eslint-config": "^4.0.0",
     "@smartive/prettier-config": "^3.0.0",
     "@types/jest": "^29.2.4",
     "del-cli": "^5.0.0",
