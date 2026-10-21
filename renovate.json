@@ -1,9 +1,7 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
-    "local>smartive/renovate-config",
-    ":automergeDisabled",
-    ":automergeMinor",
+    "gitlab>smartive/renovate-config:library",
     ":preserveSemverRanges",
     ":widenPeerDependencies",
     ":maintainLockFilesWeekly"
